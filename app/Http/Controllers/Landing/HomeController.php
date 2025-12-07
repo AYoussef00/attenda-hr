@@ -1,0 +1,127 @@
+<?php
+
+namespace App\Http\Controllers\Landing;
+
+use App\Http\Controllers\Controller;
+use App\Models\Admin\Plan;
+use App\Models\Admin\PartnerLogo;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+
+class HomeController extends Controller
+{
+    /**
+     * Display the landing page.
+     */
+    public function index(Request $request)
+    {
+        // Get all plans from database (excluding Enterprise if exists)
+        $allPlans = Plan::where('name', '!=', 'Enterprise')
+            ->orderBy('price', 'asc')
+            ->get();
+        $totalPlans = $allPlans->count();
+        
+        $plans = $allPlans->map(function ($plan, $index) use ($totalPlans) {
+            // Mark the middle plan as popular (if there are 3 or more plans)
+            $isPopular = $totalPlans >= 3 && $index === 1;
+            
+            // Format features - if features is an array, use it; otherwise create default features
+            $features = $plan->features ?? [];
+            
+            // If features is empty, create default features based on plan
+            if (empty($features)) {
+                $features = [
+                    "Up to {$plan->max_employees} employees",
+                    'Basic employee management',
+                    'Attendance tracking',
+                    'Leave management',
+                    'Email support',
+                ];
+            }
+            
+            return [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'price' => number_format($plan->price, 0), // Remove decimals for display
+                'price_raw' => $plan->price, // Keep raw price for calculations
+                'yearly_price' => $plan->yearly_price !== null ? number_format($plan->yearly_price, 0) : null,
+                'yearly_price_raw' => $plan->yearly_price,
+                'max_employees' => $plan->max_employees,
+                'features' => $features,
+                'popular' => $isPopular,
+                'description' => $this->getPlanDescription($plan->name, $plan->max_employees),
+            ];
+        })
+        ->values()
+        ->toArray();
+
+        // Add Enterprise plan at the end (without price)
+        $enterprisePlan = [
+            'id' => 'enterprise',
+            'name' => 'Enterprise',
+            'price' => 'Custom',
+            'price_raw' => null,
+            'max_employees' => null,
+            'features' => [
+                'Unlimited employees',
+                'Advanced employee management',
+                'Real-time attendance tracking',
+                'Comprehensive leave management',
+                'Priority support',
+                'Custom integrations',
+                'Dedicated account manager',
+                'Advanced security & compliance',
+                'Custom reporting & analytics',
+                'API access',
+            ],
+            'popular' => false,
+            'description' => 'Tailored solutions for large organizations',
+        ];
+
+        $plans[] = $enterprisePlan;
+
+        // Get active partner logos
+        $partnerLogos = PartnerLogo::where('is_active', true)
+            ->orderBy('display_order')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($logo) {
+                return [
+                    'id' => $logo->id,
+                    'logo_url' => Storage::disk('public')->url($logo->logo_path),
+                    'company_name' => $logo->company_name,
+                    'testimonial' => $logo->testimonial,
+                ];
+            })
+            ->values()
+            ->toArray();
+
+        return Inertia::render('Landing/Index', [
+            'plans' => $plans,
+            'partnerLogos' => $partnerLogos,
+        ]);
+    }
+
+    /**
+     * Get description for plan based on name and max employees
+     */
+    private function getPlanDescription(string $name, int $maxEmployees): string
+    {
+        $nameLower = strtolower($name);
+        
+        if (str_contains($nameLower, 'starter') || str_contains($nameLower, 'basic')) {
+            return 'Perfect for small teams getting started';
+        } elseif (str_contains($nameLower, 'professional') || str_contains($nameLower, 'pro')) {
+            return 'For growing businesses with advanced needs';
+        } elseif (str_contains($nameLower, 'enterprise') || str_contains($nameLower, 'business')) {
+            return 'Tailored solutions for large organizations';
+        } elseif ($maxEmployees >= 100) {
+            return 'For growing businesses with advanced needs';
+        } elseif ($maxEmployees >= 50) {
+            return 'Perfect for small teams getting started';
+        } else {
+            return 'Tailored solutions for your business';
+        }
+    }
+}
