@@ -1,18 +1,6 @@
 <script setup lang="ts">
-import { Button } from '@/components/ui/button';
-import { ArrowRight, CheckCircle2, Play } from 'lucide-vue-next';
-import { router } from '@inertiajs/vue3';
+import { CheckCircle2 } from 'lucide-vue-next';
 import { ref } from 'vue';
-
-interface Props {
-    onGetStartedClick?: () => void;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-    onGetStartedClick: () => {
-        router.visit('/company/register');
-    },
-});
 
 const imageError = ref(false);
 const imageSrc = 'https://images.unsplash.com/photo-1630283017802-785b7aff9aac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBvZmZpY2UlMjB3b3Jrc3BhY2V8ZW58MXx8fHwxNzYzMTcxNzMzfDA&ixlib=rb-4.1.0&q=80&w=1080';
@@ -20,10 +8,6 @@ const fallbackImageSrc = 'https://images.unsplash.com/photo-1497366216548-375260
 
 const handleImageError = () => {
     imageError.value = true;
-};
-
-const handleScheduleDemo = () => {
-    router.visit('/company/register');
 };
 </script>
 
@@ -53,27 +37,6 @@ const handleScheduleDemo = () => {
                     <p class="text-xl lg:text-2xl font-light text-gray-300 leading-relaxed max-w-2xl">
                         Join thousands of companies that trust attenda to manage their workforce. Start your free 14-day trial today.
                     </p>
-
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-col sm:flex-row gap-4 pt-4">
-                        <Button
-                            size="lg"
-                            @click="onGetStartedClick"
-                            class="bg-white text-black hover:bg-gray-100 text-base font-medium px-8 h-14 rounded-full transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                        >
-                            Start Free Trial
-                            <ArrowRight class="ml-2 h-5 w-5" />
-                        </Button>
-                        <Button
-                            size="lg"
-                            variant="outline"
-                            @click="handleScheduleDemo"
-                            class="border-2 border-white/30 text-white hover:bg-white/10 backdrop-blur-sm text-base font-medium px-8 h-14 rounded-full transition-all duration-300 hover:scale-105"
-                        >
-                            <Play class="mr-2 h-5 w-5" />
-                            Schedule Demo
-                        </Button>
-                    </div>
 
                     <!-- Features List -->
                     <div class="flex flex-wrap gap-6 pt-6">

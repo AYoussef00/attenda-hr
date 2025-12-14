@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { ArrowLeft, TrendingDown } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 const props = defineProps<{
     cycle: {
@@ -30,6 +31,15 @@ const props = defineProps<{
         leave_deductions: number;
         manual_deductions: number;
         fixed_deductions: number;
+        attendance_details?: Array<{
+            date: string;
+            check_in: string | null;
+            check_out: string | null;
+            late_minutes: number | null;
+            early_minutes: number | null;
+            deduction: number;
+            notes: string[];
+        }>;
     }>;
     summary: {
         total_attendance_deductions: number;
@@ -39,6 +49,9 @@ const props = defineProps<{
         total_deductions: number;
     };
 }>();
+
+const expandedEntryId = ref<number | null>(null);
+const detailsSection = ref<HTMLElement | null>(null);
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -74,6 +87,17 @@ const formatCurrency = (amount: number) => {
 
 const goBack = () => {
     router.visit(`/company/payroll/cycle/${props.cycle.id}`);
+};
+
+const toggleDetails = (entryId: number) => {
+    expandedEntryId.value = expandedEntryId.value === entryId ? null : entryId;
+};
+
+const scrollToDetails = () => {
+    const el = (detailsSection.value as any)?.$el ?? detailsSection.value;
+    if (el && typeof el.scrollIntoView === 'function') {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 };
 </script>
 
@@ -156,7 +180,12 @@ const goBack = () => {
                         </div>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card
+                    class="cursor-pointer transition-shadow hover:shadow-md"
+                    tabindex="0"
+                    @click="scrollToDetails"
+                    @keyup.enter.space="scrollToDetails"
+                >
                     <CardHeader class="pb-3">
                         <CardTitle class="text-sm font-medium text-slate-600">
                             Total Deductions
@@ -171,88 +200,142 @@ const goBack = () => {
             </div>
 
             <!-- Detailed Table -->
-            <Card>
-                <CardHeader>
-                    <CardTitle>Employee Deductions Details</CardTitle>
-                    <CardDescription>
-                        Breakdown of deductions for each employee
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="text-left p-3 font-semibold text-slate-700">Employee</th>
-                                    <th class="text-right p-3 font-semibold text-slate-700">Fixed Deductions</th>
-                                    <th class="text-right p-3 font-semibold text-slate-700">Attendance Deductions</th>
-                                    <th class="text-right p-3 font-semibold text-slate-700">Leave Deductions</th>
-                                    <th class="text-right p-3 font-semibold text-slate-700">Manual Deductions</th>
-                                    <th class="text-right p-3 font-semibold text-slate-700">Total Deductions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr
-                                    v-for="entry in entries"
-                                    :key="entry.id"
-                                    class="border-b hover:bg-slate-50 transition-colors"
-                                >
-                                    <td class="p-3">
-                                        <div>
-                                            <div class="font-medium">{{ entry.employee_name }}</div>
-                                            <div class="text-sm text-slate-500">{{ entry.employee_code }}</div>
-                                        </div>
-                                    </td>
-                                    <td class="p-3 text-right">
-                                        <span :class="entry.fixed_deductions > 0 ? 'text-red-600' : 'text-slate-400'">
-                                            {{ formatCurrency(entry.fixed_deductions) }}
-                                        </span>
-                                    </td>
-                                    <td class="p-3 text-right">
-                                        <span :class="entry.attendance_deductions > 0 ? 'text-red-600' : entry.attendance_deductions < 0 ? 'text-emerald-600' : 'text-slate-400'">
-                                            <span v-if="entry.attendance_deductions < 0">+{{ formatCurrency(Math.abs(entry.attendance_deductions)) }}</span>
-                                            <span v-else>{{ formatCurrency(entry.attendance_deductions) }}</span>
-                                        </span>
-                                    </td>
-                                    <td class="p-3 text-right">
-                                        <span :class="entry.leave_deductions > 0 ? 'text-red-600' : 'text-slate-400'">
-                                            {{ formatCurrency(entry.leave_deductions) }}
-                                        </span>
-                                    </td>
-                                    <td class="p-3 text-right">
-                                        <span :class="entry.manual_deductions > 0 ? 'text-red-600' : 'text-slate-400'">
-                                            {{ formatCurrency(entry.manual_deductions) }}
-                                        </span>
-                                    </td>
-                                    <td class="p-3 text-right font-semibold text-red-600">
-                                        {{ formatCurrency(entry.total_deductions) }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                            <tfoot>
-                                <tr class="border-t-2 border-slate-300 font-semibold">
-                                    <td class="p-3">Total</td>
-                                    <td class="p-3 text-right text-red-600">
-                                        {{ formatCurrency(summary.total_fixed_deductions) }}
-                                    </td>
-                                    <td class="p-3 text-right text-red-600">
-                                        {{ formatCurrency(summary.total_attendance_deductions) }}
-                                    </td>
-                                    <td class="p-3 text-right text-red-600">
-                                        {{ formatCurrency(summary.total_leave_deductions) }}
-                                    </td>
-                                    <td class="p-3 text-right text-red-600">
-                                        {{ formatCurrency(summary.total_manual_deductions) }}
-                                    </td>
-                                    <td class="p-3 text-right text-red-600">
-                                        {{ formatCurrency(summary.total_deductions) }}
-                                    </td>
-                                </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </CardContent>
-            </Card>
+            <div ref="detailsSection">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Employee Deductions Details</CardTitle>
+                        <CardDescription>
+                            Breakdown of deductions for each employee
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div v-if="!entries || entries.length === 0" class="py-8 text-center text-sm text-slate-500">
+                            No deductions found for this cycle.
+                        </div>
+                        <div v-else class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="text-left p-3 font-semibold text-slate-700">Employee</th>
+                                        <th class="text-right p-3 font-semibold text-slate-700">Fixed Deductions</th>
+                                        <th class="text-right p-3 font-semibold text-slate-700">Attendance Deductions</th>
+                                        <th class="text-right p-3 font-semibold text-slate-700">Leave Deductions</th>
+                                        <th class="text-right p-3 font-semibold text-slate-700">Manual Deductions</th>
+                                        <th class="text-right p-3 font-semibold text-slate-700">Total Deductions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        v-for="entry in entries"
+                                        :key="entry.id"
+                                        class="border-b hover:bg-slate-50 transition-colors"
+                                    >
+                                        <td class="p-3">
+                                            <div>
+                                                <div class="font-medium">{{ entry.employee_name }}</div>
+                                                <div class="text-sm text-slate-500">{{ entry.employee_code }}</div>
+                                            </div>
+                                        </td>
+                                        <td class="p-3 text-right">
+                                            <span :class="entry.fixed_deductions > 0 ? 'text-red-600' : 'text-slate-400'">
+                                                {{ formatCurrency(entry.fixed_deductions) }}
+                                            </span>
+                                        </td>
+                                        <td class="p-3 text-right">
+                                            <span :class="entry.attendance_deductions > 0 ? 'text-red-600' : entry.attendance_deductions < 0 ? 'text-emerald-600' : 'text-slate-400'">
+                                                <span v-if="entry.attendance_deductions < 0">+{{ formatCurrency(Math.abs(entry.attendance_deductions)) }}</span>
+                                                <span v-else>{{ formatCurrency(entry.attendance_deductions) }}</span>
+                                            </span>
+                                        </td>
+                                        <td class="p-3 text-right">
+                                            <span :class="entry.leave_deductions > 0 ? 'text-red-600' : 'text-slate-400'">
+                                                {{ formatCurrency(entry.leave_deductions) }}
+                                            </span>
+                                        </td>
+                                        <td class="p-3 text-right">
+                                            <span :class="entry.manual_deductions > 0 ? 'text-red-600' : 'text-slate-400'">
+                                                {{ formatCurrency(entry.manual_deductions) }}
+                                            </span>
+                                        </td>
+                                        <td class="p-3 text-right font-semibold text-red-600">
+                                            <button
+                                                class="underline underline-offset-2 hover:text-red-700"
+                                                @click="toggleDetails(entry.id)"
+                                            >
+                                                {{ formatCurrency(entry.total_deductions) }}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr v-if="expandedEntryId === entry.id" :key="`${entry.id}-details`" class="bg-slate-50/60">
+                                        <td colspan="6" class="p-3">
+                                            <div v-if="entry.attendance_details && entry.attendance_details.length" class="overflow-x-auto">
+                                                <table class="min-w-full text-sm text-slate-700 border border-slate-200 rounded-lg bg-white">
+                                                    <thead>
+                                                        <tr class="bg-slate-50 text-xs text-slate-600">
+                                                            <th class="px-3 py-2 text-left font-semibold">Date</th>
+                                                            <th class="px-3 py-2 text-left font-semibold">In</th>
+                                                            <th class="px-3 py-2 text-left font-semibold">Out</th>
+                                                            <th class="px-3 py-2 text-left font-semibold">Late</th>
+                                                            <th class="px-3 py-2 text-left font-semibold">Early</th>
+                                                            <th class="px-3 py-2 text-right font-semibold">Deduction</th>
+                                                            <th class="px-3 py-2 text-left font-semibold">Notes</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr
+                                                            v-for="detail in entry.attendance_details"
+                                                            :key="`${entry.id}-${detail.date}-${detail.check_in}-${detail.check_out}`"
+                                                            class="border-t border-slate-200"
+                                                        >
+                                                            <td class="px-3 py-2 font-semibold text-slate-900">{{ detail.date }}</td>
+                                                            <td class="px-3 py-2">{{ detail.check_in || '—' }}</td>
+                                                            <td class="px-3 py-2">{{ detail.check_out || '—' }}</td>
+                                                            <td class="px-3 py-2">{{ detail.late_minutes ?? '—' }}</td>
+                                                            <td class="px-3 py-2">{{ detail.early_minutes ?? '—' }}</td>
+                                                            <td class="px-3 py-2 text-right font-semibold text-red-600">
+                                                                {{ formatCurrency(detail.deduction) }}
+                                                            </td>
+                                                            <td class="px-3 py-2 text-slate-600 text-xs">
+                                                                <div v-if="detail.notes && detail.notes.length" class="space-y-1">
+                                                                    <div v-for="note in detail.notes" :key="note">• {{ note }}</div>
+                                                                </div>
+                                                                <span v-else class="text-slate-400">—</span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div v-else class="text-sm text-slate-500">
+                                                No attendance deductions for this entry.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr class="border-t-2 border-slate-300 font-semibold">
+                                        <td class="p-3">Total</td>
+                                        <td class="p-3 text-right text-red-600">
+                                            {{ formatCurrency(summary.total_fixed_deductions) }}
+                                        </td>
+                                        <td class="p-3 text-right text-red-600">
+                                            {{ formatCurrency(summary.total_attendance_deductions) }}
+                                        </td>
+                                        <td class="p-3 text-right text-red-600">
+                                            {{ formatCurrency(summary.total_leave_deductions) }}
+                                        </td>
+                                        <td class="p-3 text-right text-red-600">
+                                            {{ formatCurrency(summary.total_manual_deductions) }}
+                                        </td>
+                                        <td class="p-3 text-right text-red-600">
+                                            {{ formatCurrency(summary.total_deductions) }}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     </CompanyLayout>
 </template>

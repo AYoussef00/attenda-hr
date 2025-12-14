@@ -192,7 +192,7 @@ const faqData = computed(() => ({
             <Features />
             <Pricing :plans="plans" :on-select-plan="openRegister" />
             <Testimonials />
-            <CTA :on-get-started-click="openRegister" />
+            <CTA />
             <About />
         </main>
         <Footer />

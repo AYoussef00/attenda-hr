@@ -249,7 +249,15 @@ const viewPayslip = (id: number) => {
                                     <td class="p-3">{{ formatCurrency(entry.basic_salary) }}</td>
                                     <td class="p-3">{{ formatCurrency(entry.total_allowances) }}</td>
                                     <td class="p-3">{{ formatCurrency(entry.total_overtime_amount) }}</td>
-                                    <td class="p-3">{{ formatCurrency(entry.total_deductions) }}</td>
+                                    <td class="p-3">
+                                        <Button
+                                            variant="link"
+                                            class="p-0 h-auto font-semibold text-red-600"
+                                            @click="router.visit(`/company/payroll/cycle/${cycle.id}/deductions?employee_id=${entry.employee_id}`)"
+                                        >
+                                            {{ formatCurrency(entry.total_deductions) }}
+                                        </Button>
+                                    </td>
                                     <td class="p-3 font-semibold">
                                         {{ formatCurrency(entry.net_salary) }}
                                     </td>

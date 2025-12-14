@@ -3,11 +3,15 @@
 use App\Http\Controllers\Landing\HomeController;
 use App\Http\Controllers\Landing\ChatController;
 use App\Http\Controllers\Admin\RequestController;
+use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// System status page
+Route::get('/status', [StatusController::class, 'index'])->name('status');
 
 // Public route for demo requests
 Route::post('/demo-request', [RequestController::class, 'store'])->name('demo.request.store');

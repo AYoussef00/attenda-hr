@@ -157,6 +157,7 @@ class EmployeeController extends Controller
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'phone' => ['nullable', 'string', 'max:255'],
             'employee_code' => ['required', 'string', 'max:255', 'unique:employees,employee_code'],
+            'national_id' => ['required', 'string', 'max:255', 'unique:employees,national_id'],
             'position' => ['nullable', 'string', 'max:255'],
             'department_id' => ['nullable', 'exists:departments,id'],
             'shift_id' => ['nullable', 'exists:shifts,id'],
@@ -181,6 +182,7 @@ class EmployeeController extends Controller
             'user_id' => $newUser->id,
             'company_id' => $company->id,
             'employee_code' => $validated['employee_code'],
+            'national_id' => $validated['national_id'],
             'position' => $validated['position'] ?? null,
             'department_id' => $validated['department_id'] ?? null,
             'shift_id' => $validated['shift_id'] ?? null,
@@ -374,7 +376,43 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = request()->user();
+        $company = $user->company;
+
+        if (!$company) {
+            abort(403, 'User does not belong to any company.');
+        }
+
+        $employee = Employee::where('company_id', $company->id)
+            ->with(['user', 'department', 'shift'])
+            ->findOrFail($id);
+
+        $departments = Department::where('company_id', $company->id)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        $shifts = Shift::where('company_id', $company->id)
+            ->orderBy('name')
+            ->get(['id', 'name']);
+
+        return Inertia::render('Company/Employees/Edit', [
+            'employee' => [
+                'id' => $employee->id,
+                'name' => $employee->user->name ?? '',
+                'email' => $employee->user->email ?? '',
+                'phone' => $employee->user->phone ?? '',
+                'employee_code' => $employee->employee_code,
+                'national_id' => $employee->national_id,
+                'position' => $employee->position,
+                'department_id' => $employee->department_id,
+                'shift_id' => $employee->shift_id,
+                'hire_date' => $employee->hire_date?->format('Y-m-d'),
+                'contract_type' => $employee->contract_type,
+                'status' => $employee->status,
+            ],
+            'departments' => $departments,
+            'shifts' => $shifts,
+        ]);
     }
 
     /**
@@ -382,7 +420,59 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $user = $request->user();
+        $company = $user->company;
+
+        if (!$company) {
+            abort(403, 'User does not belong to any company.');
+        }
+
+        $employee = Employee::where('company_id', $company->id)
+            ->with('user')
+            ->findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . ($employee->user?->id)],
+            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
+            'phone' => ['nullable', 'string', 'max:255'],
+            'employee_code' => ['required', 'string', 'max:255', 'unique:employees,employee_code,' . $employee->id],
+            'national_id' => ['required', 'string', 'max:255', 'unique:employees,national_id,' . $employee->id],
+            'position' => ['nullable', 'string', 'max:255'],
+            'department_id' => ['nullable', 'exists:departments,id'],
+            'shift_id' => ['nullable', 'exists:shifts,id'],
+            'hire_date' => ['required', 'date'],
+            'contract_type' => ['nullable', 'string', 'max:255'],
+            'status' => ['required', 'in:active,inactive,terminated'],
+        ]);
+
+        // Update linked user
+        $employeeUser = $employee->user;
+        if ($employeeUser) {
+            $employeeUser->name = $validated['name'];
+            $employeeUser->email = $validated['email'];
+            $employeeUser->phone = $validated['phone'] ?? null;
+            if (!empty($validated['password'])) {
+                $employeeUser->password = Hash::make($validated['password']);
+            }
+            $employeeUser->save();
+        }
+
+        // Update employee
+        $employee->update([
+            'employee_code' => $validated['employee_code'],
+            'national_id' => $validated['national_id'],
+            'position' => $validated['position'] ?? null,
+            'department_id' => $validated['department_id'] ?? null,
+            'shift_id' => $validated['shift_id'] ?? null,
+            'hire_date' => $validated['hire_date'],
+            'contract_type' => $validated['contract_type'] ?? null,
+            'status' => $validated['status'],
+        ]);
+
+        return redirect()
+            ->route('company.employees.show', $employee->id)
+            ->with('success', 'Employee updated successfully.');
     }
 
     /**

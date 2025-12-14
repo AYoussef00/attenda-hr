@@ -280,6 +280,9 @@ const deleteAllRecords = () => {
                                         Check Out
                                     </th>
                                     <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
+                                        Late (min)
+                                    </th>
+                                    <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
                                         Duration
                                     </th>
                                     <th class="px-4 py-3 text-center text-xs font-semibold text-slate-700 uppercase tracking-wider">
@@ -377,6 +380,22 @@ const deleteAllRecords = () => {
                                         >
                                             <LogOut class="h-3 w-3" />
                                             {{ record.check_out_time }}
+                                        </span>
+                                        <span 
+                                            v-else
+                                            class="text-sm text-slate-400"
+                                        >
+                                            —
+                                        </span>
+                                    </td>
+
+                                    <!-- Late -->
+                                    <td class="px-4 py-3 whitespace-nowrap text-center">
+                                        <span 
+                                            v-if="record.late_minutes || record.late_minutes === 0"
+                                            class="text-sm font-medium text-amber-700"
+                                        >
+                                            {{ record.late_minutes ?? 0 }}m
                                         </span>
                                         <span 
                                             v-else

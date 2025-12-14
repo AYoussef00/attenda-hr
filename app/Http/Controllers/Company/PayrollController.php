@@ -470,6 +470,7 @@ class PayrollController extends Controller
     {
         $user = $request->user();
         $company = $user->company;
+        $employeeId = $request->get('employee_id');
 
         if (!$company) {
             abort(403, 'User does not belong to any company.');
@@ -479,26 +480,34 @@ class PayrollController extends Controller
             ->with(['entries.employee.user', 'company'])
             ->findOrFail($id);
 
-        $entries = $cycle->entries->map(function ($entry) {
-            return [
-                'id' => $entry->id,
-                'employee_id' => $entry->employee_id,
-                'employee_name' => $entry->employee->user->name ?? 'N/A',
-                'employee_code' => $entry->employee->employee_code ?? 'N/A',
-                'total_deductions' => $entry->total_deductions,
-                'attendance_deductions' => $entry->attendance_deductions ?? 0,
-                'leave_deductions' => $entry->leave_deductions ?? 0,
-                'manual_deductions' => $entry->manual_deductions ?? 0,
-                'fixed_deductions' => $entry->fixed_deductions ?? 0,
-            ];
-        });
+        $entries = $cycle->entries
+            ->when($employeeId, fn ($q) => $q->where('employee_id', $employeeId))
+            ->map(function ($entry) {
+                $attendanceDetails = $this->buildAttendanceDeductionDetails($entry);
+
+                return [
+                    'id' => $entry->id,
+                    'employee_id' => $entry->employee_id,
+                    'employee_name' => $entry->employee->user->name ?? 'N/A',
+                    'employee_code' => $entry->employee->employee_code ?? 'N/A',
+                    'total_deductions' => $entry->total_deductions,
+                    'attendance_deductions' => $entry->attendance_deductions ?? 0,
+                    'leave_deductions' => $entry->leave_deductions ?? 0,
+                    'manual_deductions' => $entry->manual_deductions ?? 0,
+                    'fixed_deductions' => $entry->fixed_deductions ?? 0,
+                    'attendance_details' => $attendanceDetails,
+                ];
+            })->values();
+
+        // Convert to plain array for Inertia to avoid any collection serialization quirks
+        $entriesArray = $entries->values()->toArray();
 
         $summary = [
-            'total_attendance_deductions' => $entries->sum('attendance_deductions'),
-            'total_leave_deductions' => $entries->sum('leave_deductions'),
-            'total_manual_deductions' => $entries->sum('manual_deductions'),
-            'total_fixed_deductions' => $entries->sum('fixed_deductions'),
-            'total_deductions' => $entries->sum('total_deductions'),
+            'total_attendance_deductions' => collect($entriesArray)->sum('attendance_deductions'),
+            'total_leave_deductions' => collect($entriesArray)->sum('leave_deductions'),
+            'total_manual_deductions' => collect($entriesArray)->sum('manual_deductions'),
+            'total_fixed_deductions' => collect($entriesArray)->sum('fixed_deductions'),
+            'total_deductions' => collect($entriesArray)->sum('total_deductions'),
         ];
 
         return Inertia::render('Company/Payroll/Deductions', [
@@ -509,9 +518,114 @@ class PayrollController extends Controller
             'company' => [
                 'name' => $company->name ?? 'Company',
             ],
-            'entries' => $entries,
+            'entries' => $entriesArray,
             'summary' => $summary,
+            'filters' => [
+                'employee_id' => $employeeId,
+            ],
         ]);
+    }
+
+    /**
+     * Build per-day attendance deduction details for a payroll entry
+     */
+    protected function buildAttendanceDeductionDetails(\App\Models\Company\PayrollEntry $entry): array
+    {
+        $employee = $entry->employee;
+        $cycle = $entry->cycle;
+
+        if (!$employee || !$cycle) {
+            return [];
+        }
+
+        $settings = \App\Models\Company\PayrollSetting::where('company_id', $employee->company_id)->first();
+        $shift = $employee->shift;
+
+        $workingHoursPerDay = $employee->working_hours_per_day ?? 8;
+        $workingDaysPerMonth = $employee->working_days_per_month ?? 26;
+        $hourlyRate = $employee->hourly_rate;
+        if ($hourlyRate === null && $employee->basic_salary) {
+            $hourlyRate = $employee->basic_salary / ($workingDaysPerMonth * $workingHoursPerDay);
+        }
+        if ($hourlyRate === null) {
+            $hourlyRate = 0; // fallback so we still return details even if salary not set
+        }
+
+        $startDate = Carbon::createFromFormat('Y-m', $cycle->month)->startOfMonth();
+        $endDate = Carbon::createFromFormat('Y-m', $cycle->month)->endOfMonth();
+
+        $shiftStartTime = $shift && $shift->start_time ? Carbon::parse($shift->start_time) : Carbon::parse('09:00');
+        $shiftEndTime = $shift && $shift->end_time ? Carbon::parse($shift->end_time) : Carbon::parse('17:00');
+        $lateGraceMinutes = $settings->late_grace_minutes ?? ($shift->late_grace_minutes ?? 0);
+
+        $attendanceRecords = AttendanceRecord::where('employee_id', $employee->id)
+            ->whereBetween('datetime', [$startDate, $endDate])
+            ->orderBy('datetime')
+            ->get()
+            ->groupBy(function ($record) {
+                return $record->datetime->format('Y-m-d');
+            });
+
+        $details = [];
+
+        foreach ($attendanceRecords as $date => $records) {
+            $checkIn = $records->where('type', 'in')->first();
+            $checkOut = $records->where('type', 'out')->last();
+
+            $lateMinutes = 0;
+            $earlyMinutes = 0;
+            $deduction = 0;
+            $notes = [];
+
+            if ($checkIn) {
+                $checkInTime = Carbon::parse($checkIn->datetime);
+                $expectedStart = Carbon::parse($date . ' ' . $shiftStartTime->format('H:i:s'));
+                $graceEndTime = $expectedStart->copy()->addMinutes($lateGraceMinutes);
+
+                if ($checkInTime->gt($graceEndTime)) {
+                    $lateMinutes = $expectedStart->diffInMinutes($checkInTime, false);
+                    $deductibleMinutes = $lateMinutes - $lateGraceMinutes;
+                    if ($deductibleMinutes > 0) {
+                        if ($settings && $settings->late_calculation_unit === 'hour') {
+                            $deductibleHours = ceil($deductibleMinutes / 60);
+                            $deduction += $deductibleHours * $hourlyRate;
+                        } else {
+                            $deductibleHours = $deductibleMinutes / 60;
+                            $deduction += $deductibleHours * $hourlyRate;
+                        }
+                        $notes[] = "Late by {$lateMinutes} min (grace {$lateGraceMinutes} min)";
+                    }
+                }
+            }
+
+            if ($checkOut) {
+                $checkOutTime = Carbon::parse($checkOut->datetime);
+                $expectedEnd = Carbon::parse($date . ' ' . $shiftEndTime->format('H:i:s'));
+
+                if ($checkOutTime->lt($expectedEnd)) {
+                    $earlyMinutes = $expectedEnd->diffInMinutes($checkOutTime);
+                    if ($earlyMinutes > 15) {
+                        $earlyHours = $earlyMinutes / 60;
+                        $deduction += $earlyHours * $hourlyRate;
+                        $notes[] = "Early leave by {$earlyMinutes} min";
+                    }
+                }
+            }
+
+            if ($lateMinutes || $earlyMinutes || $deduction > 0) {
+                $details[] = [
+                    'date' => $date,
+                    'check_in' => $checkIn ? Carbon::parse($checkIn->datetime)->format('H:i') : null,
+                    'check_out' => $checkOut ? Carbon::parse($checkOut->datetime)->format('H:i') : null,
+                    'late_minutes' => $lateMinutes ?: null,
+                    'early_minutes' => $earlyMinutes ?: null,
+                    'deduction' => round($deduction, 2),
+                    'notes' => $notes,
+                ];
+            }
+        }
+
+        return $details;
     }
 
     /**

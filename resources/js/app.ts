@@ -6,7 +6,11 @@ import type { DefineComponent } from 'vue';
 import { createApp, h } from 'vue';
 import { initializeTheme } from './composables/useAppearance';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const rawAppName = import.meta.env.VITE_APP_NAME || 'attenda.';
+const normalizedAppName = rawAppName.toLowerCase().endsWith('.')
+    ? rawAppName.toLowerCase()
+    : `${rawAppName.toLowerCase()}.`;
+const appName = normalizedAppName;
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

@@ -30,7 +30,7 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'Attenda') }}</title>
+        <title inertia>{{ config('app.name', 'attenda.') }}</title>
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         @if(file_exists(public_path('asset/logo.png')))

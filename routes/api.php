@@ -6,7 +6,11 @@ use App\Http\Controllers\Api\Employee\DocumentController;
 use App\Http\Controllers\Api\Employee\PayslipController;
 use App\Http\Controllers\Api\Employee\PerformanceController as EmployeePerformanceController;
 use App\Http\Controllers\Api\Employee\SettingsController as EmployeeSettingsController;
+use App\Http\Controllers\Api\HealthController;
 use Illuminate\Support\Facades\Route;
+
+// Health check endpoint
+Route::get('/health', [HealthController::class, 'check']);
 
 Route::prefix('v1')->group(function () {
     // Authentication

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company\AttendanceRecord;
+use App\Models\Company\PayrollSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -96,6 +97,7 @@ class AttendanceController extends Controller
         $records = $query
             ->orderBy('datetime')
             ->get();
+        $hasAnyRecord = $records->isNotEmpty();
 
         // Group records by employee_id and date
         $grouped = $records->groupBy(function ($record) {
@@ -104,7 +106,7 @@ class AttendanceController extends Controller
 
         // Get all employees in the date range
         $employeesQuery = \App\Models\Company\Employee::where('company_id', $company->id)
-            ->with('user');
+            ->with(['user', 'shift']);
         
         if ($employeeId) {
             $employeesQuery->where('id', $employeeId);
@@ -117,6 +119,7 @@ class AttendanceController extends Controller
 
         foreach ($allEmployees as $employee) {
             $user = $employee->user;
+            $shift = $employee->shift;
             $employeeDatesWithRecords = $grouped->keys()
                 ->filter(function ($key) use ($employee) {
                     return str_starts_with($key, $employee->id . '-');
@@ -141,6 +144,17 @@ class AttendanceController extends Controller
 
                 $checkIn = $checkInRecord ? Carbon::parse($checkInRecord->datetime) : null;
                 $checkOut = $checkOutRecord ? Carbon::parse($checkOutRecord->datetime) : null;
+
+                // Calculate late minutes if shift start exists
+                $lateMinutes = null;
+                if ($shift && $shift->start_time && $checkIn) {
+                    $settings = PayrollSetting::where('company_id', $company->id)->first();
+                    $grace = $settings->late_grace_minutes ?? ($shift->late_grace_minutes ?? 0);
+                    $expectedStart = Carbon::parse($recordDate . ' ' . $shift->start_time);
+                    if ($checkIn->gt($expectedStart->copy()->addMinutes($grace))) {
+                        $lateMinutes = max(0, $expectedStart->diffInMinutes($checkIn) - $grace);
+                    }
+                }
 
                 $duration = null;
                 if ($checkIn && $checkOut && $checkOut->greaterThan($checkIn)) {
@@ -167,12 +181,16 @@ class AttendanceController extends Controller
                     'check_in_time' => $checkIn ? $checkIn->format('h:i A') : null,
                     'check_out_time' => $checkOut ? $checkOut->format('h:i A') : null,
                     'duration' => $duration,
+                    'late_minutes' => $lateMinutes,
                     'status' => ($checkIn && $checkOut) ? 'present' : ($checkIn ? 'partial' : 'absent'),
                 ]);
             }
 
             // Add absence days (weekdays without any records)
-            if ($dateRangeStart && $dateRangeEnd) {
+            // Skip auto-generating absences when there are no real records and no filters were applied,
+            // so the page doesn't show empty historical rows by default.
+            $noFilters = !$date && !$startDate && !$endDate;
+            if ($dateRangeStart && $dateRangeEnd && ($hasAnyRecord || !$noFilters)) {
                 $currentDate = $dateRangeStart->copy();
                 while ($currentDate->lte($dateRangeEnd)) {
                     // Skip weekends

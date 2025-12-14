@@ -13,19 +13,26 @@ import { Label } from '@/components/ui/label';
 import InputError from '@/components/InputError.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { Users, ArrowLeft, AlertCircle, CheckCircle2 } from 'lucide-vue-next';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Users, ArrowLeft } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 const props = defineProps<{
+    employee: {
+        id: number;
+        name: string;
+        email: string;
+        phone: string | null;
+        employee_code: string;
+        national_id: string | null;
+        position: string | null;
+        department_id: number | null;
+        shift_id: number | null;
+        hire_date: string | null;
+        contract_type: string | null;
+        status: string;
+    };
     departments: Array<{ id: number; name: string }>;
     shifts: Array<{ id: number; name: string }>;
-    subscription_info: {
-        current_employees: number;
-        max_employees: number | null;
-        plan_name: string | null;
-        can_add_employee: boolean;
-    };
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -38,61 +45,48 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/company/employees',
     },
     {
-        title: 'Add New Employee',
-        href: '/company/employees/create',
+        title: 'Edit Employee',
+        href: `/company/employees/${props.employee.id}/edit`,
     },
 ];
 
 const form = useForm({
-    name: '',
-    email: '',
+    name: props.employee.name || '',
+    email: props.employee.email || '',
     password: '',
     password_confirmation: '',
-    phone: '',
-    employee_code: '',
-    national_id: '',
-    position: '',
-    department_id: null as number | null,
-    shift_id: null as number | null,
-    hire_date: '',
-    contract_type: '',
-    status: 'active',
-});
-
-const remainingEmployees = computed(() => {
-    if (!props.subscription_info.max_employees) {
-        return null;
-    }
-    return props.subscription_info.max_employees - props.subscription_info.current_employees;
+    phone: props.employee.phone || '',
+    employee_code: props.employee.employee_code || '',
+    national_id: props.employee.national_id || '',
+    position: props.employee.position || '',
+    department_id: props.employee.department_id,
+    shift_id: props.employee.shift_id,
+    hire_date: props.employee.hire_date || '',
+    contract_type: props.employee.contract_type || '',
+    status: props.employee.status || 'active',
 });
 
 const submit = () => {
-    form.post('/company/employees', {
-        onSuccess: () => {
-            // Redirect will be handled by the controller
-        },
+    form.put(`/company/employees/${props.employee.id}`, {
+        preserveScroll: true,
     });
 };
 </script>
 
 <template>
-    <Head title="Add New Employee" />
+    <Head title="Edit Employee" />
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
-        <div
-            class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4"
-        >
+        <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
             <Card>
                 <CardHeader>
                     <div class="flex items-center justify-between">
                         <div>
                             <CardTitle class="flex items-center gap-2">
                                 <Users class="h-5 w-5" />
-                                Add New Employee
+                                Edit Employee
                             </CardTitle>
-                            <CardDescription>
-                                Create a new employee account
-                            </CardDescription>
+                            <CardDescription>Update employee information</CardDescription>
                         </div>
                         <Button variant="outline" as-child>
                             <Link href="/company/employees">
@@ -103,63 +97,6 @@ const submit = () => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <!-- Subscription Info Alert -->
-                    <div v-if="subscription_info.max_employees !== null" class="mb-6">
-                        <Alert
-                            v-if="!subscription_info.can_add_employee"
-                            variant="destructive"
-                        >
-                            <AlertCircle class="h-4 w-4" />
-                            <AlertTitle>Employee Limit Reached</AlertTitle>
-                            <AlertDescription>
-                                You have reached the maximum number of employees ({{ subscription_info.max_employees }}) allowed by your {{ subscription_info.plan_name || 'subscription' }} plan. Please upgrade your plan to add more employees.
-                            </AlertDescription>
-                        </Alert>
-                        <Alert
-                            v-else
-                            variant="default"
-                            class="border-blue-500 bg-blue-50 text-blue-900 dark:bg-blue-900/20 dark:text-blue-100"
-                        >
-                            <CheckCircle2 class="h-4 w-4" />
-                            <AlertTitle>Subscription Limit</AlertTitle>
-                            <AlertDescription>
-                                <div class="flex flex-wrap items-center gap-4 mt-2">
-                                    <span>
-                                        Current Employees: <strong>{{ subscription_info.current_employees }}</strong> / {{ subscription_info.max_employees }}
-                                    </span>
-                                    <span v-if="remainingEmployees !== null && remainingEmployees > 0">
-                                        Remaining: <strong>{{ remainingEmployees }}</strong> employee{{ remainingEmployees === 1 ? '' : 's' }}
-                                    </span>
-                                    <span v-if="subscription_info.plan_name">
-                                        Plan: <strong>{{ subscription_info.plan_name }}</strong>
-                                    </span>
-                                </div>
-                            </AlertDescription>
-                        </Alert>
-                    </div>
-                    <Alert
-                        v-else
-                        variant="default"
-                        class="mb-6 border-yellow-500 bg-yellow-50 text-yellow-900 dark:bg-yellow-900/20 dark:text-yellow-100"
-                    >
-                        <AlertCircle class="h-4 w-4" />
-                        <AlertTitle>No Active Subscription</AlertTitle>
-                        <AlertDescription>
-                            You currently have {{ subscription_info.current_employees }} employee{{ subscription_info.current_employees === 1 ? '' : 's' }}. Please contact support to set up a subscription plan.
-                        </AlertDescription>
-                    </Alert>
-
-                    <!-- Employee Limit Error -->
-                    <Alert
-                        v-if="form.errors.employee_limit"
-                        variant="destructive"
-                        class="mb-6"
-                    >
-                        <AlertCircle class="h-4 w-4" />
-                        <AlertTitle>Error</AlertTitle>
-                        <AlertDescription>{{ form.errors.employee_limit }}</AlertDescription>
-                    </Alert>
-
                     <form @submit.prevent="submit" class="space-y-6">
                         <!-- Personal Information -->
                         <div class="border-b pb-6">
@@ -260,15 +197,14 @@ const submit = () => {
                                 <!-- Password -->
                                 <div class="grid gap-2">
                                     <Label for="password">
-                                        Password <span class="text-destructive">*</span>
+                                        Password
                                     </Label>
                                     <Input
                                         id="password"
                                         v-model="form.password"
                                         type="password"
                                         name="password"
-                                        required
-                                        placeholder="Enter password"
+                                        placeholder="Leave blank to keep current password"
                                         :class="{ 'border-destructive': form.errors.password }"
                                     />
                                     <InputError :message="form.errors.password" />
@@ -277,15 +213,14 @@ const submit = () => {
                                 <!-- Password Confirmation -->
                                 <div class="grid gap-2">
                                     <Label for="password_confirmation">
-                                        Confirm Password <span class="text-destructive">*</span>
+                                        Confirm Password
                                     </Label>
                                     <Input
                                         id="password_confirmation"
                                         v-model="form.password_confirmation"
                                         type="password"
                                         name="password_confirmation"
-                                        required
-                                        placeholder="Confirm password"
+                                        placeholder="Confirm new password"
                                         :class="{ 'border-destructive': form.errors.password_confirmation }"
                                     />
                                     <InputError :message="form.errors.password_confirmation" />
@@ -420,11 +355,10 @@ const submit = () => {
                             </Button>
                             <Button
                                 type="submit"
-                                :disabled="form.processing || !subscription_info.can_add_employee"
+                                :disabled="form.processing"
                             >
-                                <span v-if="form.processing">Creating...</span>
-                                <span v-else-if="!subscription_info.can_add_employee">Limit Reached</span>
-                                <span v-else>Create Employee</span>
+                                <span v-if="form.processing">Saving...</span>
+                                <span v-else>Save Changes</span>
                             </Button>
                         </div>
                     </form>
