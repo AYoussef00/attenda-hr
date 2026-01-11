@@ -161,6 +161,9 @@ Route::prefix('company')->group(function () {
         // Subscription
         Route::get('/subscription', [CompanySubscriptionController::class, 'index'])->name('company.subscription.index');
         
+        // Chat
+        Route::get('/chat', [\App\Http\Controllers\Company\ChatController::class, 'index'])->name('company.chat.index');
+        
         // Settings
         Route::get('/settings', [SettingsController::class, 'index'])->name('company.settings.index');
         Route::put('/settings', [SettingsController::class, 'update'])->name('company.settings.update');

@@ -46,6 +46,30 @@ class HandleInertiaRequests extends Middleware
             $newChatsCount = \App\Models\Admin\ChatThread::sum('unread_admin_count');
         }
 
+        // Check if company subscription is expired
+        $subscriptionExpired = false;
+        if ($request->user() && $request->user()->company) {
+            $company = $request->user()->company;
+            
+            // If bypass_expired is enabled, don't mark as expired
+            if ($company->bypass_expired) {
+                $subscriptionExpired = false;
+            } else {
+                $activeSubscription = $company->activeSubscription();
+                // If no active subscription exists, the subscription is expired (or doesn't exist)
+                // We consider it expired if the company has any subscriptions that are expired
+                if (!$activeSubscription) {
+                    $latestSubscription = $company->subscriptions()
+                        ->latest('created_at')
+                        ->first();
+                    // If there's a subscription and it's expired, mark as expired
+                    if ($latestSubscription && $latestSubscription->isExpired()) {
+                        $subscriptionExpired = true;
+                    }
+                }
+            }
+        }
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
@@ -60,6 +84,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'pendingRequestsCount' => $pendingRequestsCount,
             'newChatsCount' => $newChatsCount,
+            'subscriptionExpired' => $subscriptionExpired,
             'csrf_token' => csrf_token(),
         ];
     }

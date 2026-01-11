@@ -20,12 +20,14 @@ class Company extends Model
         'ip_whitelist',
         'settings',
         'status',
+        'bypass_expired',
     ];
 
     protected $casts = [
         'attendance_methods' => 'array',
         'ip_whitelist' => 'array',
         'settings' => 'array',
+        'bypass_expired' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

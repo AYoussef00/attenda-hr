@@ -30,6 +30,8 @@ const props = defineProps<{
         billing_period: string;
         max_employees: number;
         created_at: string;
+        late_days: number;
+        bypass_expired: boolean;
     }>;
 }>();
 
@@ -86,6 +88,18 @@ const approveSubscription = (id: number) => {
 const rejectSubscription = (id: number) => {
     if (confirm('Are you sure you want to reject this subscription?')) {
         router.post(`/system/subscriptions/${id}/reject`, {
+            onSuccess: () => {
+                // flash handled globally
+            },
+        });
+    }
+};
+
+// Toggle bypass for expired subscription
+const toggleBypass = (id: number, currentBypass: boolean) => {
+    const action = currentBypass ? 'deactivate' : 'activate';
+    if (confirm(`Are you sure you want to ${action} access for this company?`)) {
+        router.post(`/system/subscriptions/${id}/toggle-bypass`, {
             onSuccess: () => {
                 // flash handled globally
             },
@@ -175,6 +189,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
                                         End Date
                                     </th>
                                     <th class="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
+                                        Late
+                                    </th>
+                                    <th class="px-4 py-3 text-left text-sm font-medium text-muted-foreground">
                                         Status
                                     </th>
                                     <th class="px-4 py-3 text-right text-sm font-medium text-muted-foreground">
@@ -187,7 +204,7 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
                                     v-if="subscriptions.length === 0"
                                     class="border-b"
                                 >
-                                    <td colspan="8" class="px-4 py-8 text-center text-sm text-muted-foreground">
+                                    <td colspan="9" class="px-4 py-8 text-center text-sm text-muted-foreground">
                                         No subscriptions found
                                     </td>
                                 </tr>
@@ -232,6 +249,17 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
                                             />
                                         </div>
                                     </td>
+                                    <td class="px-4 py-3 text-sm">
+                                        <span
+                                            v-if="subscription.late_days > 0"
+                                            class="text-red-600 font-medium"
+                                        >
+                                            {{ subscription.late_days }} days
+                                        </span>
+                                        <span v-else class="text-muted-foreground">
+                                            -
+                                        </span>
+                                    </td>
                                     <td class="px-4 py-3">
                                         <Badge :variant="getStatusVariant(subscription.status)">
                                             {{ subscription.status }}
@@ -258,6 +286,17 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
                                                     Reject
                                                 </Button>
                                             </template>
+
+                                            <!-- Activate/Deactivate for expired subscriptions -->
+                                            <Button
+                                                v-if="isExpired(subscription.end_date)"
+                                                size="sm"
+                                                :variant="subscription.bypass_expired ? 'outline' : 'default'"
+                                                :class="subscription.bypass_expired ? 'border-orange-500 text-orange-600 hover:bg-orange-50' : 'bg-green-600 hover:bg-green-700 text-white'"
+                                                @click="toggleBypass(subscription.id, subscription.bypass_expired)"
+                                            >
+                                                {{ subscription.bypass_expired ? 'Deactivate' : 'Activate' }}
+                                            </Button>
 
                                             <!-- Edit / Delete (for all statuses) -->
                                             <Button

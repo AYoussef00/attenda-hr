@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-vue-next';
+import { Menu, X, Globe } from 'lucide-vue-next';
 import { router, usePage } from '@inertiajs/vue3';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 
@@ -53,6 +53,24 @@ const smoothScroll = (e: Event, targetId: string) => {
     if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         mobileMenuOpen.value = false;
+    }
+};
+
+const currentLang = ref<'en' | 'ar'>(() => {
+    if (typeof window !== 'undefined') {
+        return (localStorage.getItem('lang') as 'en' | 'ar') || 'en';
+    }
+    return 'en';
+});
+
+const toggleLanguage = () => {
+    const newLang = currentLang.value === 'en' ? 'ar' : 'en';
+    currentLang.value = newLang;
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('lang', newLang);
+        // Apply language change (you can add your i18n logic here)
+        document.documentElement.setAttribute('dir', newLang === 'ar' ? 'rtl' : 'ltr');
+        document.documentElement.setAttribute('lang', newLang);
     }
 };
 </script>
@@ -111,6 +129,14 @@ const smoothScroll = (e: Event, targetId: string) => {
                     >
                         Sign In
                     </Button>
+                    <button
+                        @click="toggleLanguage"
+                        class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                        :aria-label="currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English'"
+                        :title="currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English'"
+                    >
+                        <Globe class="h-5 w-5 text-gray-700" />
+                    </button>
                     <Button
                         v-if="!isAuthenticated"
                         @click="onRegisterClick"
@@ -183,13 +209,23 @@ const smoothScroll = (e: Event, targetId: string) => {
                         >
                             Sign In
                         </Button>
-                        <Button
-                            v-if="!isAuthenticated"
-                            @click="onRegisterClick"
-                            class="w-full bg-black hover:bg-gray-800 text-white"
-                        >
-                            Get Started
-                        </Button>
+                        <div class="flex items-center gap-2">
+                            <button
+                                @click="toggleLanguage"
+                                class="flex items-center gap-2 px-4 py-3 w-full text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                                :aria-label="currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English'"
+                            >
+                                <Globe class="h-5 w-5" />
+                                <span>{{ currentLang === 'en' ? 'العربية' : 'English' }}</span>
+                            </button>
+                            <Button
+                                v-if="!isAuthenticated"
+                                @click="onRegisterClick"
+                                class="flex-1 bg-black hover:bg-gray-800 text-white"
+                            >
+                                Get Started
+                            </Button>
+                        </div>
                         <Button
                             v-if="isAuthenticated"
                             @click="goToDashboard"

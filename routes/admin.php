@@ -69,6 +69,8 @@ Route::prefix('system')->group(function () {
             ->name('admin.subscriptions.approve');
         Route::post('/subscriptions/{subscription}/reject', [SubscriptionController::class, 'reject'])
             ->name('admin.subscriptions.reject');
+        Route::post('/subscriptions/{subscription}/toggle-bypass', [SubscriptionController::class, 'toggleBypass'])
+            ->name('admin.subscriptions.toggle-bypass');
 
         // Analysis
         Route::get('/analysis', [AnalysisController::class, 'index'])->name('admin.analysis.index');

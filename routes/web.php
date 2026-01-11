@@ -23,7 +23,6 @@ Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.mess
 // Company Registration (Public) - JSON API endpoint
 // CSRF is disabled for this JSON endpoint because it is called via fetch/AJAX from the same origin.
 Route::post('/company/register', [\App\Http\Controllers\Company\CompanyRegisterController::class, 'store'])
-    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
     ->name('company.register.store');
 
 Route::get('dashboard', function () {

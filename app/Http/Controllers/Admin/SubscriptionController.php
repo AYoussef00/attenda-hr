@@ -42,6 +42,14 @@ class SubscriptionController extends Controller
                     $price = $planPrice;
                 }
 
+                // Calculate late days (days past end_date)
+                $lateDays = 0;
+                $endDate = \Carbon\Carbon::parse($subscription->end_date);
+                $today = \Carbon\Carbon::today();
+                if ($endDate->lt($today)) {
+                    $lateDays = $endDate->diffInDays($today);
+                }
+
                 return [
                     'id' => $subscription->id,
                     'company_name' => $subscription->company->name ?? 'N/A',
@@ -55,6 +63,8 @@ class SubscriptionController extends Controller
                     'billing_period' => $billingPeriod,
                     'max_employees' => $subscription->plan->max_employees ?? 0,
                     'created_at' => $subscription->created_at->format('Y-m-d H:i:s'),
+                    'late_days' => $lateDays,
+                    'bypass_expired' => $subscription->company->bypass_expired ?? false,
                 ];
             })
             ->values()
@@ -231,5 +241,28 @@ class SubscriptionController extends Controller
 
         return redirect()->route('admin.subscriptions.index')
             ->with('success', 'Subscription rejected successfully.');
+    }
+
+    /**
+     * Toggle bypass_expired for a company
+     */
+    public function toggleBypass(CompanySubscription $subscription)
+    {
+        $company = $subscription->company;
+        
+        if (!$company) {
+            return redirect()->route('admin.subscriptions.index')
+                ->with('error', 'Company not found.');
+        }
+
+        $company->bypass_expired = !$company->bypass_expired;
+        $company->save();
+
+        $message = $company->bypass_expired
+            ? 'Company access activated. They can now login normally.'
+            : 'Company access deactivated. They will see subscription renewal message.';
+
+        return redirect()->route('admin.subscriptions.index')
+            ->with('success', $message);
     }
 }
