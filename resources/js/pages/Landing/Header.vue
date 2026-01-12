@@ -24,6 +24,27 @@ const isAuthenticated = computed(() => {
 });
 
 const goToDashboard = () => {
+    const user = page.props.auth?.user;
+    if (!user) {
+        router.visit('/company/login');
+        return;
+    }
+
+    const role = user.role;
+    
+    // Super admin goes to admin dashboard
+    if (role === 'super_admin') {
+        router.visit('/system/dashboard');
+        return;
+    }
+    
+    // Employee goes to employee dashboard
+    if (role === 'employee') {
+        router.visit('/company/employee/dashboard');
+        return;
+    }
+    
+    // Company admin, HR, or Manager goes to company dashboard
     router.visit('/company/dashboard');
 };
 
@@ -53,24 +74,6 @@ const smoothScroll = (e: Event, targetId: string) => {
     if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
         mobileMenuOpen.value = false;
-    }
-};
-
-const currentLang = ref<'en' | 'ar'>(() => {
-    if (typeof window !== 'undefined') {
-        return (localStorage.getItem('lang') as 'en' | 'ar') || 'en';
-    }
-    return 'en';
-});
-
-const toggleLanguage = () => {
-    const newLang = currentLang.value === 'en' ? 'ar' : 'en';
-    currentLang.value = newLang;
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('lang', newLang);
-        // Apply language change (you can add your i18n logic here)
-        document.documentElement.setAttribute('dir', newLang === 'ar' ? 'rtl' : 'ltr');
-        document.documentElement.setAttribute('lang', newLang);
     }
 };
 </script>
@@ -129,15 +132,6 @@ const toggleLanguage = () => {
                     >
                         Sign In
                     </Button>
-                    <button
-                        v-if="currentLang === 'en'"
-                        @click="toggleLanguage"
-                        class="px-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 text-sm font-medium text-gray-700"
-                        :aria-label="'Switch to Arabic'"
-                        :title="'Switch to Arabic'"
-                    >
-                        العربية
-                    </button>
                     <Button
                         v-if="!isAuthenticated"
                         @click="onRegisterClick"
@@ -210,23 +204,13 @@ const toggleLanguage = () => {
                         >
                             Sign In
                         </Button>
-                        <div class="flex items-center gap-2">
-                            <button
-                                v-if="currentLang === 'en'"
-                                @click="toggleLanguage"
-                                class="flex items-center justify-center gap-2 px-4 py-3 w-full text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                                :aria-label="'Switch to Arabic'"
-                            >
-                                <span>العربية</span>
-                            </button>
-                            <Button
-                                v-if="!isAuthenticated"
-                                @click="onRegisterClick"
-                                class="flex-1 bg-black hover:bg-gray-800 text-white"
-                            >
-                                Get Started
-                            </Button>
-                        </div>
+                        <Button
+                            v-if="!isAuthenticated"
+                            @click="onRegisterClick"
+                            class="w-full bg-black hover:bg-gray-800 text-white"
+                        >
+                            Get Started
+                        </Button>
                         <Button
                             v-if="isAuthenticated"
                             @click="goToDashboard"
