@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Head, useForm, usePage } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import Swal from 'sweetalert2';
 
 type Plan = {
     id: number | string;
@@ -51,8 +51,6 @@ const emit = defineEmits<{
 }>();
 
 const step = ref<1 | 2 | 3>(1);
-const showSuccessDialog = ref(false);
-const registrationData = ref<any>(null);
 const page = usePage();
 const plansList = computed<Plan[]>(() => (props.plans || []) as unknown as Plan[]);
 
@@ -247,8 +245,23 @@ const submit = async () => {
         }
         
         if (data.success) {
-            registrationData.value = data;
-            showSuccessDialog.value = true;
+            // Show Sweet Alert success message
+            await Swal.fire({
+                icon: 'success',
+                title: 'Request Received Successfully!',
+                text: 'We will contact you as soon as possible.',
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#10b981',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+            });
+            
+            // Close the registration modal
+            emit('close');
+            
+            // Reset form
+            form.reset();
+            step.value = 1;
         } else {
             alert(data.message || 'Failed to register company');
         }
@@ -755,45 +768,6 @@ const industryOptions = [
             </form>
         </div>
 
-        <!-- Success Dialog -->
-        <Dialog :open="showSuccessDialog" @update:open="showSuccessDialog = $event">
-            <DialogContent class="sm:max-w-lg border-none p-0 shadow-2xl">
-                <div class="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-50 via-white to-blue-50 p-8">
-                    <!-- Decorative Elements -->
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-                    <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-200/20 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
-                    
-                    <div class="relative z-10 text-center">
-                        <!-- Success Icon -->
-                        <div class="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg">
-                            <svg class="h-12 w-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
-                            </svg>
-                        </div>
-                        
-                        <!-- Title -->
-                        <DialogTitle class="mb-4 text-3xl font-bold text-gray-900">
-                            Request Received Successfully!
-                        </DialogTitle>
-                        
-                        <!-- Message -->
-                        <DialogDescription class="mx-auto max-w-md text-base text-gray-600 leading-relaxed">
-                            {{ registrationData?.message || 'Your request has been received. We will contact you as soon as possible.' }}
-                        </DialogDescription>
-                        
-                        <!-- Close Button -->
-                        <div class="mt-8">
-                            <Button 
-                                @click="showSuccessDialog = false; $emit('close')" 
-                                class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-6 text-base font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                            >
-                                Close
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
     </div>
 </template>
 
