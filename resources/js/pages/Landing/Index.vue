@@ -157,6 +157,9 @@ const faqData = computed(() => ({
         <meta name="revisit-after" content="7 days" />
         <link rel="canonical" :href="siteUrl" />
 
+        <!-- Google Search Console Verification -->
+        <meta name="google-site-verification" content="vrCaxY9k2eTiL1iOQf3SokZlKwVLu3cejv0ogX6lvb8" />
+
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
         <meta property="og:url" :content="siteUrl" />
