@@ -30,41 +30,6 @@ Route::get('dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// Sitemap routes
-Route::get('/sitemap.xml', function () {
-    $baseUrl = url('/');
-    
-    $pages = [
-        [
-            'loc' => $baseUrl,
-            'lastmod' => now()->toAtomString(),
-            'changefreq' => 'daily',
-            'priority' => '1.0',
-        ],
-        [
-            'loc' => $baseUrl . '/company/login',
-            'lastmod' => now()->toAtomString(),
-            'changefreq' => 'monthly',
-            'priority' => '0.8',
-        ],
-        [
-            'loc' => $baseUrl . '/company/register',
-            'lastmod' => now()->toAtomString(),
-            'changefreq' => 'monthly',
-            'priority' => '0.9',
-        ],
-    ];
-    
-    return response()->view('sitemap', ['pages' => $pages])
-        ->header('Content-Type', 'text/xml');
-})->name('sitemap');
-
-Route::get('/robots.txt', function () {
-    $baseUrl = url('/');
-    return response("User-agent: *\nAllow: /\n\nSitemap: {$baseUrl}/sitemap.xml")
-        ->header('Content-Type', 'text/plain');
-})->name('robots');
-
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
 require __DIR__.'/company.php';

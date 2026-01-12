@@ -24,27 +24,6 @@ const isAuthenticated = computed(() => {
 });
 
 const goToDashboard = () => {
-    const user = page.props.auth?.user;
-    if (!user) {
-        router.visit('/company/login');
-        return;
-    }
-
-    const role = user.role;
-    
-    // Super admin goes to admin dashboard
-    if (role === 'super_admin') {
-        router.visit('/system/dashboard');
-        return;
-    }
-    
-    // Employee goes to employee dashboard
-    if (role === 'employee') {
-        router.visit('/company/employee/dashboard');
-        return;
-    }
-    
-    // Company admin, HR, or Manager goes to company dashboard
     router.visit('/company/dashboard');
 };
 
