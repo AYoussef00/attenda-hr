@@ -35,7 +35,9 @@ const formattedAvgDuration = computed(() => {
 </script>
 
 <template>
-    <Head title="Chat Analysis" />
+    <Head title="Attenda - Chat Analysis | Chat Analytics & Reports">
+        <meta name="description" content="تحليل الدردشة في Attenda. عرض إحصائيات المحادثات، أوقات الاستجابة، رضا العملاء، والتقارير." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

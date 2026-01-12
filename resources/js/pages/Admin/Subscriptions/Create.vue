@@ -78,7 +78,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Subscription" />
+    <Head title="Attenda - Add New Subscription | Create Company Subscription">
+        <meta name="description" content="إنشاء اشتراك جديد في Attenda. إضافة اشتراك لشركة مع تحديد الخطة، تاريخ البدء، وفترة الاشتراك." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div

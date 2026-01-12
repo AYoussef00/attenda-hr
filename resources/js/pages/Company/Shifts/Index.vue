@@ -57,7 +57,9 @@ const deleteShift = (id: number) => {
 </script>
 
 <template>
-    <Head title="Shifts" />
+    <Head title="Attenda - Shifts Management | Work Schedule Planning">
+        <meta name="description" content="إدارة الورديات في Attenda. إنشاء وتنظيم جداول العمل، الورديات، وأوقات الدوام للموظفين." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

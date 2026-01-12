@@ -168,7 +168,7 @@ const getBarWidth = (value: number, max: number) => {
 </script>
 
 <template>
-    <Head title="Admin Dashboard" />
+    <Head title="Attenda - Admin Dashboard | System Management" />
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div

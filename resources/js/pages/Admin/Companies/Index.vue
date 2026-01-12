@@ -72,7 +72,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
 </script>
 
 <template>
-    <Head title="Companies" />
+    <Head title="Attenda - Companies Management | All Registered Companies">
+        <meta name="description" content="إدارة الشركات في Attenda. عرض جميع الشركات المسجلة، معلوماتها، حالة الاشتراك، وإدارة الحسابات." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div

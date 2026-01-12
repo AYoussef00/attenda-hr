@@ -119,7 +119,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
 </script>
 
 <template>
-    <Head title="Assign / Return Assets" />
+    <Head title="Attenda - Asset Assignments | Assign & Return Assets">
+        <meta name="description" content="توزيع وإرجاع الأصول في Attenda. تعيين الأصول للموظفين، تتبعها، وإرجاعها عند الحاجة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

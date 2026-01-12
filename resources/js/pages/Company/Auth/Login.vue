@@ -57,7 +57,9 @@ const submit = () => {
         title="Log in to your company"
         description="Enter your email and password below to log in"
     >
-        <Head title="Company Login" />
+        <Head title="Attenda - Company Login | Sign In to HR Management System">
+            <meta name="description" content="سجل دخولك إلى نظام Attenda لإدارة الموارد البشرية. وصول آمن إلى لوحة تحكم الشركة وإدارة الموظفين والرواتب." />
+        </Head>
 
         <div
             v-if="status"

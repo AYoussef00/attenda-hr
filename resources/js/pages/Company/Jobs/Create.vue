@@ -68,7 +68,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Create Job" />
+    <Head title="Attenda - Create Job Posting | Post New Job Opportunity">
+        <meta name="description" content="إنشاء إعلان وظيفة جديد في Attenda. نشر فرصة عمل جديدة مع تفاصيل الوظيفة والمتطلبات." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

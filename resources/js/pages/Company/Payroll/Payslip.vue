@@ -66,7 +66,7 @@ const goBack = () => {
 </script>
 
 <template>
-    <Head :title="`Payslip - ${entry.employee.name}`" />
+    <Head :title="`Attenda - Payslip ${entry.employee.name} | Salary Slip`" />
 
     <CompanyLayout>
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

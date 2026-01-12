@@ -54,7 +54,9 @@ const deleteJob = (id: number, event: Event) => {
 </script>
 
 <template>
-    <Head title="Job Applications" />
+    <Head title="Attenda - Job Applications | Recruitment & Hiring">
+        <meta name="description" content="إدارة الوظائف والتوظيف في Attenda. نشر الوظائف، استقبال الطلبات، واختيار المرشحين المناسبين." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

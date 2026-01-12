@@ -76,7 +76,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Employee" />
+    <Head title="Attenda - Add New Employee | Create Employee Profile">
+        <meta name="description" content="إضافة موظف جديد في Attenda. سجل معلومات الموظف الجديد، الوظيفة، القسم، وتفاصيل التعيين بسهولة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

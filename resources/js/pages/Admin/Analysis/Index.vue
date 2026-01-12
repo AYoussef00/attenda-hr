@@ -52,7 +52,9 @@ const breadcrumbs: BreadcrumbItem[] = [
 </script>
 
 <template>
-    <Head title="Analysis" />
+    <Head title="Attenda - System Analysis | Analytics & Insights">
+        <meta name="description" content="تحليل النظام في Attenda. عرض إحصائيات شاملة عن استخدام النظام، الشركات، الموظفين، والأداء." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

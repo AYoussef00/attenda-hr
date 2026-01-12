@@ -157,7 +157,9 @@ const rejectLeave = () => {
 </script>
 
 <template>
-    <Head title="Leave Requests" />
+    <Head title="Attenda - Leave Requests Management | Employee Leave Tracking">
+        <meta name="description" content="إدارة طلبات الإجازات في Attenda. عرض ومراجعة طلبات إجازات الموظفين، الموافقة أو الرفض بسهولة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

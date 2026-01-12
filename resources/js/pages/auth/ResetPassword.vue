@@ -22,7 +22,9 @@ const inputEmail = ref(props.email);
         title="Reset password"
         description="Please enter your new password below"
     >
-        <Head title="Reset password" />
+        <Head title="Attenda - Reset Password | Create New Password">
+            <meta name="description" content="إنشاء كلمة مرور جديدة لحسابك في Attenda. أدخل كلمة المرور الجديدة لإكمال عملية الاستعادة." />
+        </Head>
 
         <Form
             v-bind="update.form()"

@@ -107,7 +107,7 @@ const getStatusVariant = (status: string) => {
 </script>
 
 <template>
-    <Head title="Employee Dashboard" />
+    <Head title="Attenda - Employee Dashboard | My HR Portal" />
 
     <EmployeeLayout :breadcrumbs="breadcrumbs" :notifications="notifications">
         <div

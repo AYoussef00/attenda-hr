@@ -53,7 +53,9 @@ const codeValue = computed<string>(() => code.value.join(''));
         :title="authConfigContent.title"
         :description="authConfigContent.description"
     >
-        <Head title="Two-Factor Authentication" />
+        <Head title="Attenda - Two-Factor Authentication | Security Verification">
+            <meta name="description" content="المصادقة الثنائية في Attenda. أدخل رمز التحقق من تطبيق المصادقة لإكمال تسجيل الدخول." />
+        </Head>
 
         <div class="space-y-6">
             <template v-if="!showRecoveryInput">

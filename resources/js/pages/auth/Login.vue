@@ -24,7 +24,9 @@ defineProps<{
         title="Log in to your account"
         description="Enter your email and password below to log in"
     >
-        <Head title="Log in" />
+        <Head title="Attenda - Login | Sign In to Your Account">
+            <meta name="description" content="سجل دخولك إلى حسابك في Attenda. وصول آمن إلى نظام إدارة الموارد البشرية الخاص بك." />
+        </Head>
 
         <div
             v-if="status"

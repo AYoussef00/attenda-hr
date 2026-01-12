@@ -74,7 +74,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Edit Plan" />
+    <Head title="Attenda - Edit Plan | Update Subscription Plan">
+        <meta name="description" content="تعديل خطة الاشتراك في Attenda. تحديث سعر الخطة، المميزات، وعدد الموظفين المسموح بهم." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div

@@ -119,7 +119,9 @@ const deleteAllRecords = () => {
 </script>
 
 <template>
-    <Head title="Attendance" />
+    <Head title="Attenda - Attendance Management | Track Employee Attendance">
+        <meta name="description" content="إدارة الحضور والانصراف في Attenda. تتبع حضور الموظفين، ساعات العمل، والتأخيرات بسهولة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

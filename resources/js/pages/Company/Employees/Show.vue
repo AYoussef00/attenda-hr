@@ -324,7 +324,7 @@ const isExpired = (expiryDate: string | null) => {
 </script>
 
 <template>
-    <Head :title="`${employee.name} - Employee Profile`" />
+    <Head :title="`Attenda - ${employee.name} | Employee Profile`" />
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

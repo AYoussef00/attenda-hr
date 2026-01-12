@@ -118,7 +118,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
 </script>
 
 <template>
-    <Head title="Subscriptions" />
+    <Head title="Attenda - Subscriptions Management | Company Subscriptions">
+        <meta name="description" content="إدارة الاشتراكات في Attenda. عرض اشتراكات الشركات، حالة الدفع، تاريخ التجديد، وتحديث الخطط." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div

@@ -392,7 +392,9 @@ const acceptThread = (id: number) => {
 </script>
 
 <template>
-    <Head title="Visitor Chat" />
+    <Head title="Attenda - Visitor Chat | Customer Support Chat">
+        <meta name="description" content="دردشة الزوار في Attenda. إدارة محادثات الدعم الفني مع الزوار، الرد على الاستفسارات، وتقديم المساعدة." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex flex-1 flex-col min-h-0 rounded-3xl bg-slate-50 p-4 shadow-inner">

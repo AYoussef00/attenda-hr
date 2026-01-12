@@ -118,7 +118,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Company" />
+    <Head title="Attenda - Add New Company | Register New Company">
+        <meta name="description" content="إضافة شركة جديدة في Attenda. تسجيل شركة جديدة في النظام مع تفاصيلها الأساسية وخطة الاشتراك." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div

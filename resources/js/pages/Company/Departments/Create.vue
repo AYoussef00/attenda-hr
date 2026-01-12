@@ -44,7 +44,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Department" />
+    <Head title="Attenda - Add New Department | Create Department">
+        <meta name="description" content="إضافة قسم جديد في Attenda. إنشاء قسم جديد في الشركة وتنظيم هيكل المؤسسة بسهولة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

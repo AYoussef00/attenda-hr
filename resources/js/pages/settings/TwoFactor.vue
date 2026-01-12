@@ -40,7 +40,9 @@ onUnmounted(() => {
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbs">
-        <Head title="Two-Factor Authentication" />
+        <Head title="Attenda - Two-Factor Authentication | Security Settings">
+            <meta name="description" content="المصادقة الثنائية في Attenda. تفعيل أو تعطيل المصادقة الثنائية لزيادة أمان حسابك." />
+        </Head>
         <SettingsLayout>
             <div class="space-y-6">
                 <HeadingSmall

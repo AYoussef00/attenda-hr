@@ -111,7 +111,9 @@ const remainingEmployees = computed(() => {
 </script>
 
 <template>
-    <Head title="Subscription" />
+    <Head title="Attenda - Subscription Management | Plan & Billing">
+        <meta name="description" content="إدارة الاشتراك في Attenda. عرض خطة الاشتراك الحالية، الفواتير، تاريخ التجديد، وتحديث الخطة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

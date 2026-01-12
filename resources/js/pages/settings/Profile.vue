@@ -34,7 +34,9 @@ const user = page.props.auth.user;
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Profile settings" />
+        <Head title="Attenda - Profile Settings | Update Your Profile">
+            <meta name="description" content="إعدادات الملف الشخصي في Attenda. تحديث معلوماتك الشخصية، بيانات الاتصال، والصورة الشخصية." />
+        </Head>
 
         <SettingsLayout>
             <div class="flex flex-col space-y-6">

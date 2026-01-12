@@ -19,7 +19,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Appearance settings" />
+        <Head title="Attenda - Appearance Settings | Customize Interface">
+            <meta name="description" content="إعدادات المظهر في Attenda. تخصيص مظهر الواجهة، الوضع الليلي، الألوان، وتفضيلات العرض." />
+        </Head>
 
         <SettingsLayout>
             <div class="space-y-6">

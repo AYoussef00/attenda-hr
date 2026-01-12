@@ -117,7 +117,7 @@ const viewPayslip = (id: number) => {
 </script>
 
 <template>
-    <Head :title="`Payroll Cycle - ${formatMonth(cycle.month)}`" />
+    <Head :title="`Attenda - Payroll Cycle ${formatMonth(cycle.month)} | Salary Processing`" />
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

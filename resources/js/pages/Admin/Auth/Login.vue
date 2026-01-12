@@ -22,7 +22,9 @@ defineProps<{
         title="Log in to admin panel"
         description="Enter your email and password below to log in"
     >
-        <Head title="Admin Login" />
+        <Head title="Attenda - Admin Login | System Administrator Access">
+            <meta name="description" content="تسجيل دخول المسؤولين إلى نظام Attenda. وصول آمن إلى لوحة التحكم الإدارية لإدارة النظام والشركات." />
+        </Head>
 
         <div
             v-if="status"

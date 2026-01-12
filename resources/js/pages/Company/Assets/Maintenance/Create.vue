@@ -63,7 +63,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Create Maintenance Ticket" />
+    <Head title="Attenda - Create Maintenance Ticket | Asset Maintenance Request">
+        <meta name="description" content="إنشاء تذكرة صيانة في Attenda. طلب صيانة لأصل معين مع تفاصيل المشكلة والمطلوب إصلاحه." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

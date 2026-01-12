@@ -52,7 +52,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Asset" />
+    <Head title="Attenda - Add New Asset | Register Company Asset">
+        <meta name="description" content="إضافة أصل جديد في Attenda. تسجيل أصل جديد للشركة مع تفاصيله، القيمة، والحالة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

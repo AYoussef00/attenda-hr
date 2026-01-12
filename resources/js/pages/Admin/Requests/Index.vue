@@ -142,7 +142,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
 </script>
 
 <template>
-    <Head title="Requests" />
+    <Head title="Attenda - Demo Requests | Contact & Demo Requests">
+        <meta name="description" content="طلبات العرض التوضيحي في Attenda. عرض طلبات الشركات للتعرف على النظام، متابعة الطلبات، والرد عليها." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

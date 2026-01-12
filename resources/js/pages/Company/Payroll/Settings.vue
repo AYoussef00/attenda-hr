@@ -118,7 +118,9 @@ const goBack = () => {
 </script>
 
 <template>
-    <Head title="Payroll Settings" />
+    <Head title="Attenda - Payroll Settings | Configure Payroll System">
+        <meta name="description" content="إعدادات الرواتب في Attenda. تكوين نظام الرواتب، الحوافز، الاستقطاعات، وفترات الدفع." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

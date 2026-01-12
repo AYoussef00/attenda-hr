@@ -135,7 +135,9 @@ const getBalancePercent = (balance: { total: number; remaining: number }) => {
 </script>
 
 <template>
-    <Head title="My Leaves" />
+    <Head title="Attenda - My Leaves | Leave Requests & History">
+        <meta name="description" content="إجازاتي في Attenda. عرض طلبات الإجازات، حالة الطلبات، رصيد الإجازات المتبقي، وتاريخ الإجازات." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div

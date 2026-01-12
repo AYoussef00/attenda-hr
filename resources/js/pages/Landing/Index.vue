@@ -52,7 +52,7 @@ const openRegister = (payload?: any) => {
 // SEO Meta Data
 const siteUrl = computed(() => window.location.origin);
 const pageTitle = 'Attenda - Advanced Cloud HR Management System | HRMS Software';
-const pageDescription = 'Streamline your HR operations with Attenda, a comprehensive cloud-based HR management system. Features include employee management, payroll, attendance tracking, leave management, and more. Trusted by 3000+ companies worldwide.';
+const pageDescription = 'Attenda هو نظام إدارة موارد بشرية سحابي متكامل للشركات لتسهيل متابعة الموظفين، الرواتب، الحضور، والتقارير.';
 const pageKeywords = 'HR management system, HRMS software, cloud HR, employee management, payroll software, attendance tracking, leave management, HR software Saudi Arabia, HR system, human resource management';
 const ogImage = computed(() => `${siteUrl.value}/asset/logo.png`);
 

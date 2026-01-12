@@ -16,7 +16,9 @@ import { Form, Head } from '@inertiajs/vue3';
         title="Create an account"
         description="Enter your details below to create your account"
     >
-        <Head title="Register" />
+        <Head title="Attenda - Register | Create Your Account">
+            <meta name="description" content="أنشئ حسابك في Attenda وابدأ استخدام نظام إدارة الموارد البشرية السحابي المتكامل." />
+        </Head>
 
         <Form
             v-bind="store.form()"

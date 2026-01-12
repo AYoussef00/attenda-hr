@@ -169,7 +169,9 @@ const isExpired = (expiryDate: string | null) => {
 </script>
 
 <template>
-    <Head title="My Documents" />
+    <Head title="Attenda - My Documents | Personal Documents & Files">
+        <meta name="description" content="مستنداتي في Attenda. عرض وإدارة المستندات الشخصية، الوثائق، الشهادات، والملفات المرفقة." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div

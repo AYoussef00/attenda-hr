@@ -13,7 +13,8 @@ withDefaults(
 </script>
 
 <template>
-    <Head title="Welcome">
+    <Head title="Attenda - Welcome | HR Management System">
+        <meta name="description" content="مرحباً بك في Attenda - نظام إدارة الموارد البشرية السحابي المتكامل لإدارة الموظفين والرواتب والحضور بسهولة." />
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     </Head>

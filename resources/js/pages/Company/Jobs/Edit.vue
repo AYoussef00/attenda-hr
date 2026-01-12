@@ -87,7 +87,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Edit Job" />
+    <Head title="Attenda - Edit Job Posting | Update Job Details">
+        <meta name="description" content="تعديل إعلان الوظيفة في Attenda. تحديث تفاصيل الوظيفة، المتطلبات، والشروط بسهولة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

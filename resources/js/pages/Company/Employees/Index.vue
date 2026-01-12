@@ -86,7 +86,9 @@ const remainingEmployees = computed(() => {
 </script>
 
 <template>
-    <Head title="Employees" />
+    <Head title="Attenda - Employees Management | Employee Directory">
+        <meta name="description" content="إدارة الموظفين في Attenda. عرض وإدارة جميع موظفي الشركة، معلوماتهم الشخصية، الوظائف، والأقسام بسهولة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

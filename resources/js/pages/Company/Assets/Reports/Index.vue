@@ -51,7 +51,9 @@ const downloadReport = (type: string) => {
 </script>
 
 <template>
-    <Head title="Asset Reports" />
+    <Head title="Attenda - Asset Reports | Assets Analytics & Reports">
+        <meta name="description" content="تقارير الأصول في Attenda. عرض تحليلات الأصول، قيمتها، حالة الصيانة، والتوزيع على الموظفين." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

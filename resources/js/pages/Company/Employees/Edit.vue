@@ -74,7 +74,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Edit Employee" />
+    <Head title="Attenda - Edit Employee | Update Employee Information">
+        <meta name="description" content="تعديل معلومات الموظف في Attenda. تحديث بيانات الموظف، الوظيفة، القسم، والمعلومات الشخصية." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

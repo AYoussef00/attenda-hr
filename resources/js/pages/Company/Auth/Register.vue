@@ -20,7 +20,9 @@ const props = defineProps<{
         title="Create your Attenda HR account"
         description="Fill in your company details, account owner, and choose the best plan for your team."
     >
-        <Head title="Company Registration" />
+        <Head title="Attenda - Company Registration | Create Your HR Account">
+            <meta name="description" content="سجل شركتك في Attenda واحصل على نظام إدارة موارد بشرية متكامل. ابدأ إدارة موظفيك ورواتبهم بسهولة." />
+        </Head>
 
         <CompanyRegisterForm :plans="plans" />
     </AuthBase>

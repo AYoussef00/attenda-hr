@@ -213,7 +213,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
 </script>
 
 <template>
-    <Head title="Settings" />
+    <Head title="Attenda - Company Settings | Configure Your Account">
+        <meta name="description" content="إعدادات الشركة في Attenda. تكوين معلومات الشركة، طرق الحضور، أنواع الإجازات، والإعدادات العامة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

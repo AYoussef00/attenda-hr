@@ -72,7 +72,9 @@ const formatScore = (score: number | null) => {
 </script>
 
 <template>
-    <Head title="My Performance" />
+    <Head title="Attenda - My Performance | Performance Reviews & Goals">
+        <meta name="description" content="أدائي في Attenda. عرض تقييمات الأداء، الأهداف، التقدم المحرز، وملاحظات المدير." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div

@@ -127,7 +127,9 @@ const getInitials = (name: string) => {
 </script>
 
 <template>
-    <Head title="Profile" />
+    <Head title="Attenda - My Profile | Employee Profile & Information">
+        <meta name="description" content="ملفي الشخصي في Attenda. عرض وتحديث المعلومات الشخصية، بيانات الاتصال، الوظيفة، والقسم." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div

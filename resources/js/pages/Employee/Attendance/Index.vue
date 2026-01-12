@@ -175,7 +175,9 @@ const formatDate = (dateString: string) => {
 </script>
 
 <template>
-    <Head title="My Attendance" />
+    <Head title="Attenda - My Attendance | Track My Work Hours">
+        <meta name="description" content="حضوري في Attenda. عرض سجل الحضور والانصراف، ساعات العمل، التأخيرات، والإجازات." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div

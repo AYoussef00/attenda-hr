@@ -22,7 +22,9 @@ const breadcrumbItems: BreadcrumbItem[] = [
 
 <template>
     <AppLayout :breadcrumbs="breadcrumbItems">
-        <Head title="Password settings" />
+        <Head title="Attenda - Password Settings | Change Your Password">
+            <meta name="description" content="تغيير كلمة المرور في Attenda. تحديث كلمة المرور لحسابك لضمان أمان أفضل لحسابك." />
+        </Head>
 
         <SettingsLayout>
             <div class="space-y-6">

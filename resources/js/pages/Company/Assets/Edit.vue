@@ -67,7 +67,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Edit Asset" />
+    <Head title="Attenda - Edit Asset | Update Asset Information">
+        <meta name="description" content="تعديل معلومات الأصل في Attenda. تحديث تفاصيل الأصل، حالته، قيمته، ومعلومات الصيانة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

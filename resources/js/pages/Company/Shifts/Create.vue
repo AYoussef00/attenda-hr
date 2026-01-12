@@ -49,7 +49,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Shift" />
+    <Head title="Attenda - Add New Shift | Create Work Shift Schedule">
+        <meta name="description" content="إضافة وردية عمل جديدة في Attenda. إنشاء جدول وردية جديد مع تحديد أوقات الدخول والخروج." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

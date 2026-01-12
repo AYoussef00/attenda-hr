@@ -135,7 +135,9 @@ const getCircularProgress = (score: number | null) => {
 </script>
 
 <template>
-    <Head title="Performance" />
+    <Head title="Attenda - Performance Management | Employee Performance Reviews">
+        <meta name="description" content="إدارة الأداء في Attenda. تقييم أداء الموظفين، مراجعات الأداء، وضع الأهداف، ومتابعة التقدم." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

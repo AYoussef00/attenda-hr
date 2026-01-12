@@ -89,7 +89,7 @@ const getAttendancePercent = (value: number) => {
 </script>
 
 <template>
-    <Head title="Company Dashboard" />
+    <Head title="Attenda - Company Dashboard | HR Management System" />
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

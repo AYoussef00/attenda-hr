@@ -102,7 +102,7 @@ const scrollToDetails = () => {
 </script>
 
 <template>
-    <Head :title="`Deductions Breakdown - ${formatMonth(cycle.month)}`" />
+    <Head :title="`Attenda - Deductions Breakdown ${formatMonth(cycle.month)} | Payroll Deductions`" />
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

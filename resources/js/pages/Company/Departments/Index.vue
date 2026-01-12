@@ -51,7 +51,9 @@ const deleteDepartment = (id: number) => {
 </script>
 
 <template>
-    <Head title="Departments" />
+    <Head title="Attenda - Departments Management | Organizational Structure">
+        <meta name="description" content="إدارة الأقسام في Attenda. تنظيم هيكل الشركة، إنشاء الأقسام، وإدارة الموظفين حسب الأقسام." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

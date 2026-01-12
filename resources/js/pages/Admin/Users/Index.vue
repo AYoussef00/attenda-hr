@@ -81,7 +81,9 @@ const roleLabel = (role: string) => {
 </script>
 
 <template>
-    <Head title="Admin Users" />
+    <Head title="Attenda - Admin Users | System Administrators Management">
+        <meta name="description" content="إدارة المستخدمين الإداريين في Attenda. عرض وإدارة حسابات المسؤولين، الصلاحيات، والوصول للنظام." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

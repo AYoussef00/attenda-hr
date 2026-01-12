@@ -78,7 +78,9 @@ const getStatusBadgeVariant = (status: string) => {
 </script>
 
 <template>
-    <Head title="My Payslips" />
+    <Head title="Attenda - My Payslips | Salary Slips & Payment History">
+        <meta name="description" content="كشوف المرتبات في Attenda. عرض كشوف المرتبات السابقة، تحميلها، ومتابعة تفاصيل الراتب والحوافز." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div

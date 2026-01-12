@@ -93,7 +93,9 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
 </script>
 
 <template>
-    <Head title="Asset Maintenance" />
+    <Head title="Attenda - Asset Maintenance | Maintenance Management">
+        <meta name="description" content="إدارة صيانة الأصول في Attenda. تتبع طلبات الصيانة، إصلاح الأصول، ومتابعة حالة الصيانة." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div

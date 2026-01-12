@@ -90,7 +90,9 @@ const deleteLogo = (id: number) => {
 </script>
 
 <template>
-    <Head title="Settings" />
+    <Head title="Attenda - Admin Settings | System Configuration">
+        <meta name="description" content="إعدادات النظام في Attenda. تكوين إعدادات النظام العامة، الإشعارات، الأمان، والتكاملات." />
+    </Head>
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

@@ -160,7 +160,9 @@ const regenerateCycle = (id: number | null, month: string) => {
 </script>
 
 <template>
-    <Head title="Payroll" />
+    <Head title="Attenda - Payroll Management | Salary & Payment Processing">
+        <meta name="description" content="إدارة الرواتب في Attenda. معالجة الرواتب، الحوافز، الاستقطاعات، وإنشاء كشوف المرتبات تلقائياً." />
+    </Head>
 
     <CompanyLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">

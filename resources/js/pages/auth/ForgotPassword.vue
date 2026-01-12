@@ -20,7 +20,9 @@ defineProps<{
         title="Forgot password"
         description="Enter your email to receive a password reset link"
     >
-        <Head title="Forgot password" />
+        <Head title="Attenda - Forgot Password | Reset Your Account">
+            <meta name="description" content="استعادة كلمة المرور لحسابك في Attenda. أدخل بريدك الإلكتروني لإعادة تعيين كلمة المرور." />
+        </Head>
 
         <div
             v-if="status"

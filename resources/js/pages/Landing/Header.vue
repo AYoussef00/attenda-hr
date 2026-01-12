@@ -70,9 +70,9 @@ const smoothScroll = (e: Event, targetId: string) => {
                 <!-- Logo -->
                 <div class="flex flex-1 items-center">
                     <a href="/" class="group">
-                        <span class="text-xl lg:text-2xl font-bold tracking-tight text-gray-900">
+                        <h1 class="text-xl lg:text-2xl font-bold tracking-tight text-gray-900">
                             attenda<span class="text-gray-400">.</span>
-                        </span>
+                        </h1>
                     </a>
                 </div>
 

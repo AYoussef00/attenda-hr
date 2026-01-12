@@ -14,7 +14,9 @@ import { Form, Head } from '@inertiajs/vue3';
         title="Confirm your password"
         description="This is a secure area of the application. Please confirm your password before continuing."
     >
-        <Head title="Confirm password" />
+        <Head title="Attenda - Confirm Password | Security Verification">
+            <meta name="description" content="تأكيد كلمة المرور للوصول إلى منطقة محمية في Attenda. أدخل كلمة المرور للمتابعة." />
+        </Head>
 
         <Form
             v-bind="store.form()"

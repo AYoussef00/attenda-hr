@@ -17,7 +17,9 @@ defineProps<{
         title="Verify email"
         description="Please verify your email address by clicking on the link we just emailed to you."
     >
-        <Head title="Email verification" />
+        <Head title="Attenda - Email Verification | Verify Your Email Address">
+            <meta name="description" content="التحقق من بريدك الإلكتروني في Attenda. تحقق من بريدك الإلكتروني لإكمال عملية التسجيل." />
+        </Head>
 
         <div
             v-if="status === 'verification-link-sent'"

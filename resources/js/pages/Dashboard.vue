@@ -14,7 +14,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 </script>
 
 <template>
-    <Head title="Dashboard" />
+    <Head title="Attenda - Dashboard | HR Management System" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div

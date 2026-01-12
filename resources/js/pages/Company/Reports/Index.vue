@@ -4,7 +4,9 @@ import { Head } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <Head title="Reports" />
+    <Head title="Attenda - Reports & Analytics | HR Reports Dashboard">
+        <meta name="description" content="التقارير والتحليلات في Attenda. عرض تقارير شاملة عن الموظفين، الحضور، الرواتب، والأداء." />
+    </Head>
 
     <CompanyLayout>
         <div

@@ -39,7 +39,9 @@ const scrollToSection = (id: string) => {
 </script>
 
 <template>
-    <Head title="Documentation" />
+    <Head title="Attenda - Documentation | User Guide & Help Center">
+        <meta name="description" content="دليل المستخدم في Attenda. تعلم كيفية استخدام النظام، الميزات، الإعدادات، والدعم الفني." />
+    </Head>
 
     <div class="min-h-screen bg-white text-slate-900 flex">
         <!-- Sidebar -->

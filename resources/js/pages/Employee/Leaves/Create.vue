@@ -106,7 +106,9 @@ const submit = () => {
 </script>
 
 <template>
-    <Head title="Add New Leave Request" />
+    <Head title="Attenda - Request Leave | Submit New Leave Request">
+        <meta name="description" content="طلب إجازة في Attenda. تقديم طلب إجازة جديد مع تحديد نوع الإجازة، التاريخ، والمدة." />
+    </Head>
 
     <EmployeeLayout :breadcrumbs="breadcrumbs">
         <div
