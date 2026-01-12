@@ -50,7 +50,35 @@ const openRegister = (payload?: any) => {
 };
 
 // SEO Meta Data
-const siteUrl = computed(() => window.location.origin);
+// Normalize canonical URL: always HTTPS, no trailing slash, no www (or keep www based on preference)
+const siteUrl = computed(() => {
+    if (typeof window === 'undefined') {
+        // SSR fallback - use APP_URL from env or default
+        return 'https://attenda.com';
+    }
+    
+    const origin = window.location.origin;
+    const pathname = window.location.pathname.replace(/\/$/, ''); // Remove trailing slash
+    let url = origin + pathname;
+    
+    // Force HTTPS if not already
+    if (url.startsWith('http://')) {
+        url = url.replace('http://', 'https://');
+    }
+    
+    // Remove www (or keep it based on your preference)
+    // If you want to keep www, comment out the next two lines
+    if (url.includes('://www.')) {
+        url = url.replace('://www.', '://');
+    }
+    
+    // Ensure no trailing slash for root
+    if (url.endsWith('/') && url.split('/').length > 4) {
+        url = url.slice(0, -1);
+    }
+    
+    return url;
+});
 const pageTitle = 'Attenda - Advanced Cloud HR Management System | HRMS Software';
 const pageDescription = 'Streamline your HR operations with Attenda, a comprehensive cloud-based HR management system. Features include employee management, payroll, attendance tracking, leave management, and more. Trusted by 3000+ companies worldwide.';
 const pageKeywords = 'HR management system, HRMS software, cloud HR, employee management, payroll software, attendance tracking, leave management, HR software Saudi Arabia, HR system, human resource management';
@@ -63,18 +91,35 @@ const structuredData = computed(() => ({
     'name': 'Attenda',
     'applicationCategory': 'BusinessApplication',
     'operatingSystem': 'Web',
+    'browserRequirements': 'Requires JavaScript. Requires HTML5.',
+    'softwareVersion': '2.0',
+    'releaseNotes': 'Cloud-based HR management system',
     'offers': {
         '@type': 'AggregateOffer',
         'priceCurrency': 'SAR',
         'availability': 'https://schema.org/InStock',
+        'offerCount': props.plans?.length || 3,
     },
     'aggregateRating': {
         '@type': 'AggregateRating',
         'ratingValue': '4.8',
         'ratingCount': '3000',
+        'bestRating': '5',
+        'worstRating': '1',
     },
     'description': pageDescription,
     'url': siteUrl.value,
+    'screenshot': ogImage.value,
+    'featureList': [
+        'Employee Management',
+        'Payroll Processing',
+        'Attendance Tracking',
+        'Leave Management',
+        'Performance Reviews',
+        'Document Management',
+        'Security & Compliance',
+        'Time & Scheduling',
+    ],
 }));
 
 const organizationData = computed(() => ({
@@ -82,14 +127,69 @@ const organizationData = computed(() => ({
     '@type': 'Organization',
     'name': 'Attenda',
     'url': siteUrl.value,
-    'logo': ogImage.value,
+    'logo': {
+        '@type': 'ImageObject',
+        'url': ogImage.value,
+        'width': 512,
+        'height': 512,
+    },
     'description': pageDescription,
+    'foundingDate': '2020',
     'sameAs': [],
     'contactPoint': {
         '@type': 'ContactPoint',
         'contactType': 'Customer Service',
         'areaServed': 'Worldwide',
+        'availableLanguage': ['English', 'Arabic'],
     },
+    'address': {
+        '@type': 'PostalAddress',
+        'addressCountry': 'SA',
+    },
+}));
+
+// WebSite Schema with SearchAction
+const websiteData = computed(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'Attenda',
+    'url': siteUrl.value,
+    'description': pageDescription,
+    'publisher': {
+        '@type': 'Organization',
+        'name': 'Attenda',
+        'logo': {
+            '@type': 'ImageObject',
+            'url': ogImage.value,
+        },
+    },
+    'potentialAction': {
+        '@type': 'SearchAction',
+        'target': {
+            '@type': 'EntryPoint',
+            'urlTemplate': `${siteUrl.value}/?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+    },
+}));
+
+// Service Schema
+const serviceData = computed(() => ({
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    'name': 'HR Management System',
+    'description': 'Comprehensive cloud-based HR management system for businesses',
+    'provider': {
+        '@type': 'Organization',
+        'name': 'Attenda',
+        'url': siteUrl.value,
+    },
+    'areaServed': {
+        '@type': 'Country',
+        'name': 'Worldwide',
+    },
+    'serviceType': 'Software as a Service (SaaS)',
+    'category': 'Human Resources Management',
 }));
 
 const breadcrumbData = computed(() => ({
@@ -143,6 +243,72 @@ const faqData = computed(() => ({
         },
     ],
 }));
+
+// Product/Offer Schema for Pricing Plans
+const productData = computed(() => {
+    if (!props.plans || props.plans.length === 0) return null;
+    
+    const offers = props.plans
+        .filter(plan => plan.price_raw !== null && plan.name !== 'Enterprise')
+        .map(plan => ({
+            '@type': 'Offer',
+            'name': plan.name,
+            'description': plan.description,
+            'price': plan.price_raw,
+            'priceCurrency': 'SAR',
+            'availability': 'https://schema.org/InStock',
+            'url': `${siteUrl.value}/company/register?plan=${plan.id}`,
+            'priceSpecification': {
+                '@type': 'UnitPriceSpecification',
+                'price': plan.price_raw,
+                'priceCurrency': 'SAR',
+                'billingIncrement': 'P1M', // Monthly billing
+                ...(plan.yearly_price_raw && {
+                    'referenceQuantity': {
+                        '@type': 'QuantitativeValue',
+                        'value': 12,
+                        'unitCode': 'MON',
+                    },
+                }),
+            },
+            ...(plan.yearly_price_raw && {
+                'alternateOffer': {
+                    '@type': 'Offer',
+                    'price': plan.yearly_price_raw,
+                    'priceCurrency': 'SAR',
+                    'priceSpecification': {
+                        '@type': 'UnitPriceSpecification',
+                        'price': plan.yearly_price_raw,
+                        'priceCurrency': 'SAR',
+                        'billingIncrement': 'P1Y', // Yearly billing
+                    },
+                },
+            }),
+        }));
+    
+    if (offers.length === 0) return null;
+    
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        'name': 'Attenda HR Management System',
+        'description': pageDescription,
+        'brand': {
+            '@type': 'Brand',
+            'name': 'Attenda',
+        },
+        'offers': {
+            '@type': 'AggregateOffer',
+            'offerCount': offers.length,
+            'lowPrice': Math.min(...offers.map(o => o.price)),
+            'highPrice': Math.max(...offers.map(o => o.price)),
+            'priceCurrency': 'SAR',
+            'offers': offers,
+        },
+        'category': 'Software',
+        'applicationCategory': 'BusinessApplication',
+    };
+});
 </script>
 
 <template>
@@ -155,7 +321,10 @@ const faqData = computed(() => ({
         <meta name="robots" content="index, follow" />
         <meta name="language" content="English" />
         <meta name="revisit-after" content="7 days" />
-        <link rel="canonical" :href="siteUrl" />
+        <link rel="canonical" :href="siteUrl.replace(/\/$/, '')" />
+
+        <!-- Sitemap -->
+        <link rel="sitemap" type="application/xml" :href="`${siteUrl}/sitemap.xml`" />
 
         <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
@@ -182,6 +351,9 @@ const faqData = computed(() => ({
         <!-- Structured Data -->
         <script type="application/ld+json" v-html="JSON.stringify(structuredData)" />
         <script type="application/ld+json" v-html="JSON.stringify(organizationData)" />
+        <script type="application/ld+json" v-html="JSON.stringify(websiteData)" />
+        <script type="application/ld+json" v-html="JSON.stringify(serviceData)" />
+        <script v-if="productData" type="application/ld+json" v-html="JSON.stringify(productData)" />
         <script type="application/ld+json" v-html="JSON.stringify(breadcrumbData)" />
         <script type="application/ld+json" v-html="JSON.stringify(faqData)" />
     </Head>

@@ -10,6 +10,12 @@ use Laravel\Fortify\Features;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Sitemap
+Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
+
+// Robots.txt
+Route::get('/robots.txt', [\App\Http\Controllers\SitemapController::class, 'robots'])->name('robots');
+
 // System status page
 Route::get('/status', [StatusController::class, 'index'])->name('status');
 

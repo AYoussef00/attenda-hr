@@ -30,5 +30,14 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // Handle 404 errors with custom Inertia page
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, \Illuminate\Http\Request $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Page not found'], 404);
+            }
+
+            return \Inertia\Inertia::render('Errors/404')
+                ->toResponse($request)
+                ->setStatusCode(404);
+        });
     })->create();

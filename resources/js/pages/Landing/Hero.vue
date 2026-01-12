@@ -119,8 +119,8 @@ const submitDemoRequest = () => {
                         </div>
                         </div>
 
-                        <!-- Watch Now Button (video icon + text) -->
-                        <div>
+                        <!-- Watch Now Button (video icon + text) - Hidden -->
+                        <div v-if="false">
                             <Button
                                 type="button"
                                 class="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2 text-sm font-medium text-white shadow-md hover:bg-black/90 transition-colors"

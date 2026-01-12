@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
-import { Menu, X, Globe } from 'lucide-vue-next';
+import { Menu, X } from 'lucide-vue-next';
 import { router, usePage } from '@inertiajs/vue3';
 import { computed, ref, onMounted, onUnmounted } from 'vue';
 
@@ -130,12 +130,13 @@ const toggleLanguage = () => {
                         Sign In
                     </Button>
                     <button
+                        v-if="currentLang === 'en'"
                         @click="toggleLanguage"
-                        class="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-                        :aria-label="currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English'"
-                        :title="currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English'"
+                        class="px-3 py-1.5 rounded-full hover:bg-gray-100 transition-colors duration-200 text-sm font-medium text-gray-700"
+                        :aria-label="'Switch to Arabic'"
+                        :title="'Switch to Arabic'"
                     >
-                        <Globe class="h-5 w-5 text-gray-700" />
+                        العربية
                     </button>
                     <Button
                         v-if="!isAuthenticated"
@@ -211,12 +212,12 @@ const toggleLanguage = () => {
                         </Button>
                         <div class="flex items-center gap-2">
                             <button
+                                v-if="currentLang === 'en'"
                                 @click="toggleLanguage"
-                                class="flex items-center gap-2 px-4 py-3 w-full text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
-                                :aria-label="currentLang === 'en' ? 'Switch to Arabic' : 'Switch to English'"
+                                class="flex items-center justify-center gap-2 px-4 py-3 w-full text-base font-medium text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+                                :aria-label="'Switch to Arabic'"
                             >
-                                <Globe class="h-5 w-5" />
-                                <span>{{ currentLang === 'en' ? 'العربية' : 'English' }}</span>
+                                <span>العربية</span>
                             </button>
                             <Button
                                 v-if="!isAuthenticated"
