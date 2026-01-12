@@ -65,7 +65,7 @@ const handleImageError = () => {
                         <div class="aspect-[4/3] overflow-hidden rounded-3xl">
                             <img
                                 :src="imageError ? fallbackImageSrc : imageSrc"
-                                alt="Modern office workspace"
+                                alt="مساحة عمل مكتبية حديثة - فريق يعمل في بيئة احترافية"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                 @error="handleImageError"
                                 loading="lazy"

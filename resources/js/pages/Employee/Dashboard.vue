@@ -124,7 +124,7 @@ const getStatusVariant = (status: string) => {
                             >
                                 <img
                                     :src="company.logo"
-                                    :alt="company.name"
+                                    :alt="`شعار الشركة ${company.name || 'الشركة'}`"
                                     class="h-full w-full object-cover"
                                 />
                             </div>

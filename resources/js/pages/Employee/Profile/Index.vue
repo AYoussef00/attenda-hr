@@ -160,7 +160,7 @@ const getInitials = (name: string) => {
                 <CardHeader>
                     <div class="flex items-center gap-6">
                         <Avatar class="h-24 w-24">
-                            <AvatarImage :src="company.logo" :alt="user.name" />
+                            <AvatarImage :src="company.logo" :alt="`شعار الشركة ${company.name || 'الشركة'}`" />
                             <AvatarFallback class="text-2xl">
                                 {{ getInitials(user.name) }}
                             </AvatarFallback>
@@ -278,7 +278,7 @@ const getInitials = (name: string) => {
                     <CardContent class="space-y-4">
                         <div class="flex items-center gap-4">
                             <Avatar class="h-16 w-16">
-                                <AvatarImage :src="company.logo" :alt="company.name" />
+                                <AvatarImage :src="company.logo" :alt="`شعار الشركة ${company.name || 'الشركة'}`" />
                                 <AvatarFallback>
                                     {{ getInitials(company.name) }}
                                 </AvatarFallback>

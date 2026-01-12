@@ -152,7 +152,7 @@ const deleteLogo = (id: number) => {
                                     <div class="relative inline-block">
                                         <img
                                             :src="logoPreview"
-                                            alt="Logo preview"
+                                            alt="معاينة شعار النظام"
                                             class="h-32 w-auto object-contain border border-gray-300 rounded-lg p-2 bg-white"
                                         />
                                         <Button
@@ -217,7 +217,7 @@ const deleteLogo = (id: number) => {
                                 <div class="flex items-center justify-center h-32 mb-2">
                                     <img
                                         :src="logo.logo_url"
-                                        :alt="logo.company_name || 'Partner Logo'"
+                                        :alt="logo.company_name ? `شعار شركة ${logo.company_name}` : 'شعار شريك Attenda'"
                                         class="max-h-full max-w-full object-contain"
                                     />
                                 </div>

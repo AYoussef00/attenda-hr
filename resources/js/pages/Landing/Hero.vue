@@ -338,7 +338,7 @@ const submitDemoRequest = () => {
                     >
                         <img
                             :src="logo.logo_url"
-                            :alt="logo.company_name || 'Partner Logo'"
+                            :alt="logo.company_name ? `شعار شركة ${logo.company_name}` : 'شعار شريك Attenda'"
                             class="max-h-full w-auto max-w-[220px] object-contain"
                             loading="lazy"
                         />

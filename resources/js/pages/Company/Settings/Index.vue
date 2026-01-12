@@ -350,7 +350,7 @@ const flash = computed(() => page.props.flash as { success?: string; error?: str
                                 <div v-if="logoPreview" class="relative w-32 h-32 border rounded-lg overflow-hidden">
                                     <img
                                         :src="logoPreview"
-                                        alt="Logo preview"
+                                        alt="معاينة شعار الشركة"
                                         class="w-full h-full object-cover"
                                     />
                                     <Button
