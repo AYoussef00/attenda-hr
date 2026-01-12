@@ -119,8 +119,8 @@ const submitDemoRequest = () => {
                         </div>
                         </div>
 
-                        <!-- Watch Now Button (video icon + text) - Hidden -->
-                        <div v-if="false">
+                        <!-- Watch Now Button (video icon + text) -->
+                        <div>
                             <Button
                                 type="button"
                                 class="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2 text-sm font-medium text-white shadow-md hover:bg-black/90 transition-colors"
@@ -329,17 +329,17 @@ const submitDemoRequest = () => {
                     Trusted by 600+ Organizations
                 </p>
                 <div
-                    class="flex flex-wrap items-center justify-center gap-x-16 gap-y-16"
+                    class="flex flex-wrap items-center justify-center gap-x-14 gap-y-12 opacity-80"
                 >
                     <div
                         v-for="logo in props.logos"
                         :key="logo.id"
-                        class="flex h-20 sm:h-28 lg:h-32 items-center justify-center transition-all duration-300 hover:scale-110"
+                        class="flex h-14 sm:h-20 items-center justify-center grayscale hover:grayscale-0 transition-all duration-200"
                     >
                         <img
                             :src="logo.logo_url"
                             :alt="logo.company_name || 'Partner Logo'"
-                            class="max-h-full w-auto max-w-[280px] sm:max-w-[320px] lg:max-w-[360px] object-contain"
+                            class="max-h-full w-auto max-w-[220px] object-contain"
                             loading="lazy"
                         />
                     </div>

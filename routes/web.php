@@ -10,12 +10,6 @@ use Laravel\Fortify\Features;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Sitemap
-Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap');
-
-// Robots.txt
-Route::get('/robots.txt', [\App\Http\Controllers\SitemapController::class, 'robots'])->name('robots');
-
 // System status page
 Route::get('/status', [StatusController::class, 'index'])->name('status');
 
@@ -29,6 +23,7 @@ Route::post('/chat/messages', [ChatController::class, 'store'])->name('chat.mess
 // Company Registration (Public) - JSON API endpoint
 // CSRF is disabled for this JSON endpoint because it is called via fetch/AJAX from the same origin.
 Route::post('/company/register', [\App\Http\Controllers\Company\CompanyRegisterController::class, 'store'])
+    ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
     ->name('company.register.store');
 
 Route::get('dashboard', function () {
