@@ -223,6 +223,17 @@ const submit = async () => {
             }
         }
         
+        // Validate plan_id before sending
+        if (!form.plan_id || form.plan_id === null) {
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please select a plan before submitting.',
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+        
         const response = await fetch('/company/register', {
             method: 'POST',
             headers: headers,
@@ -244,9 +255,19 @@ const submit = async () => {
             
             // If it's a validation error, try to parse it
             if (response.status === 422) {
-                alert('Validation failed. Please check the form fields.');
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: 'Validation failed. Please check the form fields.',
+                    confirmButtonText: 'OK',
+                });
             } else {
-                alert('Server error. Please try again or contact support.');
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Server Error',
+                    text: `Server error (${response.status}). Please try again or contact support.`,
+                    confirmButtonText: 'OK',
+                });
             }
             return;
         }
@@ -269,9 +290,19 @@ const submit = async () => {
                     .flat()
                     .join('\n');
 
-                alert(allMessages || 'Please check the required fields and try again.');
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Validation Error',
+                    text: allMessages || 'Please check the required fields and try again.',
+                    confirmButtonText: 'OK',
+                });
             } else {
-                alert(data.message || `Error: ${response.status}`);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: data.message || `Server error (${response.status}). Please try again or contact support.`,
+                    confirmButtonText: 'OK',
+                });
             }
             return;
         }
@@ -295,11 +326,21 @@ const submit = async () => {
             form.reset();
             step.value = 1;
         } else {
-            alert(data.message || 'Failed to register company');
+            await Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed',
+                text: data.message || 'Failed to register company. Please try again.',
+                confirmButtonText: 'OK',
+            });
         }
     } catch (error: any) {
         console.error('Registration error:', error);
-        alert(error.message || 'An error occurred during registration. Please try again.');
+        await Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'An error occurred during registration. Please try again.',
+            confirmButtonText: 'OK',
+        });
     }
 };
 

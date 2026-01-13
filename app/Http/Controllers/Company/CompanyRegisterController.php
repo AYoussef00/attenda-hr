@@ -36,7 +36,7 @@ class CompanyRegisterController extends Controller
                 'admin.email' => ['required', 'email', 'max:255', 'unique:users,email'],
                 'admin.phone' => ['nullable', 'string', 'max:255'],
                 'admin.password' => ['required', 'string', 'min:8', 'confirmed'],
-                'plan_id' => ['required', 'exists:plans,id'],
+                'plan_id' => ['required', 'integer', 'exists:plans,id'],
                 'billing_period' => ['nullable', 'in:monthly,yearly'],
             ], [
                 'company.name.required' => 'Company name is required.',
@@ -172,14 +172,28 @@ class CompanyRegisterController extends Controller
             ], 422);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Company Registration Failed: ' . $e->getMessage(), [
+            
+            // Log full error details
+            Log::error('Company Registration Failed', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'request' => $request->all(),
                 'trace' => $e->getTraceAsString(),
             ]);
             
+            // Return user-friendly error message
+            $errorMessage = 'Failed to register company. Please try again or contact support.';
+            
+            // In development, show more details
+            if (config('app.debug')) {
+                $errorMessage = 'Failed to register company: ' . $e->getMessage();
+            }
+            
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to register company: ' . $e->getMessage(),
+                'message' => $errorMessage,
+                'error' => config('app.debug') ? $e->getMessage() : null,
             ], 500);
         }
     }
