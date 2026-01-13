@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
-import { Head, useForm, usePage } from '@inertiajs/vue3';
+import { Head, useForm, usePage, router } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import Swal from 'sweetalert2';
 
@@ -176,24 +176,56 @@ const submit = async () => {
     if (!canSubmit.value) return;
     
     try {
-        // Get CSRF token from Inertia props or meta tag
-        const csrfToken = (page.props.csrf_token as string) || 
-                         document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ||
-                         '';
+        // Get CSRF token - prioritize Inertia props, then meta tag
+        let csrfToken = (page.props.csrf_token as string) || 
+                       document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || 
+                       '';
+        
+        // Also try to get XSRF-TOKEN from cookie (Laravel's default CSRF cookie name)
+        if (!csrfToken) {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'XSRF-TOKEN' && value) {
+                    csrfToken = decodeURIComponent(value);
+                    break;
+                }
+            }
+        }
         
         if (!csrfToken) {
-            alert('CSRF token not found. Please refresh the page.');
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'CSRF token not found. Please refresh the page and try again.',
+                confirmButtonText: 'OK',
+            });
             return;
+        }
+        
+        // Prepare headers
+        const headers: Record<string, string> = {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+        };
+        
+        // Add CSRF token - Laravel accepts both X-CSRF-TOKEN and X-XSRF-TOKEN
+        headers['X-CSRF-TOKEN'] = csrfToken;
+        
+        // Also add X-XSRF-TOKEN if we got it from cookie (Laravel's preferred method)
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'XSRF-TOKEN' && value) {
+                headers['X-XSRF-TOKEN'] = decodeURIComponent(value);
+                break;
+            }
         }
         
         const response = await fetch('/company/register', {
             method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': csrfToken,
-                'X-Requested-With': 'XMLHttpRequest',
-            },
+            headers: headers,
             credentials: 'same-origin',
             body: JSON.stringify({
                 company: form.company,
