@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Landing;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Plan;
 use App\Models\Admin\PartnerLogo;
+use App\Models\Admin\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -97,9 +98,15 @@ class HomeController extends Controller
             ->values()
             ->toArray();
 
+        // Get settings texts from database
+        $settingsText1 = Setting::getValue('settings_text1', 'Finally, a performance management platform that works your way.');
+        $settingsText2 = Setting::getValue('settings_text2', 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.');
+
         return Inertia::render('Landing/Index', [
             'plans' => $plans,
             'partnerLogos' => $partnerLogos,
+            'settingsText1' => $settingsText1,
+            'settingsText2' => $settingsText2,
         ]);
     }
 

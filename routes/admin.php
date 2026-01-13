@@ -98,6 +98,10 @@ Route::prefix('system')->group(function () {
         Route::get('/requests', [RequestController::class, 'index'])->name('admin.requests.index');
         Route::put('/requests/{id}', [RequestController::class, 'update'])->name('admin.requests.update');
         Route::delete('/requests/{id}', [RequestController::class, 'destroy'])->name('admin.requests.destroy');
+        
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
+        Route::post('/settings/update-texts', [\App\Http\Controllers\Admin\SettingsController::class, 'updateTexts'])->name('admin.settings.update-texts');
     });
 });
 

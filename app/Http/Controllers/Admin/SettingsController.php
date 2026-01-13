@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin\PartnerLogo;
+use App\Models\Admin\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
@@ -15,27 +16,31 @@ class SettingsController extends Controller
      */
     public function index(Request $request)
     {
-        $partnerLogos = PartnerLogo::orderBy('display_order')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($logo) {
-                return [
-                    'id' => $logo->id,
-                    'logo_path' => $logo->logo_path,
-                    'logo_url' => Storage::disk('public')->url($logo->logo_path),
-                    'company_name' => $logo->company_name,
-                    'testimonial' => $logo->testimonial,
-                    'display_order' => $logo->display_order,
-                    'is_active' => $logo->is_active,
-                    'created_at' => $logo->created_at->format('Y-m-d H:i:s'),
-                ];
-            })
-            ->values()
-            ->toArray();
+        // Get saved texts from database
+        $text1 = Setting::getValue('settings_text1', 'Finally, a performance management platform that works your way.');
+        $text2 = Setting::getValue('settings_text2', 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.');
 
         return Inertia::render('Admin/Settings/Index', [
-            'partnerLogos' => $partnerLogos,
+            'text1' => $text1,
+            'text2' => $text2,
         ]);
+    }
+
+    /**
+     * Update settings texts.
+     */
+    public function updateTexts(Request $request)
+    {
+        $validated = $request->validate([
+            'text1' => ['required', 'string', 'max:500'],
+            'text2' => ['required', 'string', 'max:1000'],
+        ]);
+
+        // Store in database
+        Setting::setValue('settings_text1', $validated['text1']);
+        Setting::setValue('settings_text2', $validated['text2']);
+
+        return back()->with('success', 'Settings texts updated successfully.');
     }
 
     /**

@@ -16,6 +16,8 @@ interface PartnerLogo {
 interface Props {
     onGetStartedClick?: () => void;
     logos?: PartnerLogo[];
+    settingsText1?: string;
+    settingsText2?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -84,22 +86,12 @@ const submitDemoRequest = () => {
                         id="hero-heading"
                         class="text-3xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-5xl xl:text-[3.25rem]"
                     >
-                        Finally, a performance
-                        <br />
-                        management platform
-                        <br />
-                        that
-                        <span
-                            class="bg-gradient-to-r from-purple-500 via-pink-500 to-orange-400 bg-clip-text text-transparent"
-                        >
-                            works your way.
-                        </span>
+                        {{ props.settingsText1 || 'Finally, a performance management platform that works your way.' }}
                     </h1>
 
                     <!-- Description -->
                     <p class="max-w-xl text-base leading-relaxed text-slate-600 sm:text-lg">
-                        Bring goals, feedback, and competencies together in one place with a platform that adapts to
-                        your process — not the other way around.
+                        {{ props.settingsText2 || 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.' }}
                     </p>
 
                     <!-- Ratings Row -->

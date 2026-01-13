@@ -1,33 +1,13 @@
 <script setup lang="ts">
 import AdminLayout from '@/layouts/admin/AdminLayout.vue';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import admin from '@/routes/admin';
 import { type BreadcrumbItem } from '@/types';
-import { Head, router, usePage, useForm } from '@inertiajs/vue3';
-import { Settings, Upload, Trash2, Building2, CheckCircle2, XCircle } from 'lucide-vue-next';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { computed, ref } from 'vue';
-
-const props = defineProps<{
-    partnerLogos: Array<{
-        id: number;
-        logo_path: string;
-        logo_url: string;
-        company_name: string | null;
-        display_order: number;
-        is_active: boolean;
-        created_at: string;
-    }>;
-}>();
+import { Head, useForm } from '@inertiajs/vue3';
+import { Save } from 'lucide-vue-next';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -40,52 +20,24 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const page = usePage();
-const flash = computed(() => page.props.flash as { success?: string; error?: string } | undefined);
+const props = defineProps<{
+    text1?: string;
+    text2?: string;
+}>();
 
-const logoForm = useForm({
-    logo: null as File | null,
-    company_name: '',
+// Form for editing texts
+const form = useForm({
+    text1: props.text1 || 'Finally, a performance management platform that works your way.',
+    text2: props.text2 || 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.',
 });
 
-const logoPreview = ref<string | null>(null);
-
-const handleLogoChange = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
-    
-    if (file) {
-        logoForm.logo = file;
-        
-        // Create preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            logoPreview.value = e.target?.result as string;
-        };
-        reader.readAsDataURL(file);
-    }
-};
-
-const submitLogo = () => {
-    if (!logoForm.logo) {
-        return;
-    }
-
-    logoForm.post('/system/settings/partner-logos', {
+const handleSubmit = () => {
+    form.post('/system/settings/update-texts', {
         preserveScroll: true,
         onSuccess: () => {
-            logoForm.reset();
-            logoPreview.value = null;
+            // Success handled by flash message
         },
     });
-};
-
-const deleteLogo = (id: number) => {
-    if (confirm('Are you sure you want to delete this logo?')) {
-        router.delete(`/system/settings/partner-logos/${id}`, {
-            preserveScroll: true,
-        });
-    }
 };
 </script>
 
@@ -96,173 +48,79 @@ const deleteLogo = (id: number) => {
 
     <AdminLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-            <!-- Success Message -->
-            <Alert
-                v-if="flash?.success"
-                variant="default"
-                class="border-green-500 bg-green-50 text-green-900 dark:bg-green-900/20 dark:text-green-100"
-            >
-                <CheckCircle2 class="h-4 w-4" />
-                <AlertTitle>Success</AlertTitle>
-                <AlertDescription>{{ flash.success }}</AlertDescription>
-            </Alert>
-
-            <!-- Error Message -->
-            <Alert
-                v-if="flash?.error"
-                variant="destructive"
-            >
-                <XCircle class="h-4 w-4" />
-                <AlertTitle>Error</AlertTitle>
-                <AlertDescription>{{ flash.error }}</AlertDescription>
-            </Alert>
-
-            <!-- Partner Logos Section -->
+            <!-- Edit Form -->
             <Card>
                 <CardHeader>
-                    <div class="flex items-center gap-2">
-                        <Building2 class="h-5 w-5" />
-                        <CardTitle>Partner Company Logos</CardTitle>
-                    </div>
+                    <CardTitle>Edit Settings Texts</CardTitle>
                     <CardDescription>
-                        Add and manage logos of partner companies
+                        Update the text content displayed on the settings page
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <!-- Add New Logo Form -->
-                    <div class="mb-8 p-6 border border-gray-200 rounded-lg bg-gray-50">
-                        <h3 class="text-lg font-semibold mb-4">Add New Partner Logo</h3>
-                        <form @submit.prevent="submitLogo" class="space-y-4">
-                            <div class="grid gap-2">
-                                <Label for="company_name">Company Name (Optional)</Label>
-                                <Input
-                                    id="company_name"
-                                    v-model="logoForm.company_name"
-                                    type="text"
-                                    placeholder="Enter company name"
-                                    class="max-w-md"
-                                />
-                            </div>
-
-                            <div class="grid gap-2">
-                                <Label for="logo">Logo Image <span class="text-red-500">*</span></Label>
-                                
-                                <!-- Logo Preview -->
-                                <div v-if="logoPreview" class="mb-4">
-                                    <div class="relative inline-block">
-                                        <img
-                                            :src="logoPreview"
-                                            alt="معاينة شعار النظام"
-                                            class="h-32 w-auto object-contain border border-gray-300 rounded-lg p-2 bg-white"
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant="ghost"
-                                            size="icon"
-                                            class="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-red-500 text-white hover:bg-red-600"
-                                            @click="logoPreview = null; logoForm.logo = null"
-                                        >
-                                            <XCircle class="h-4 w-4" />
-                                        </Button>
-                                    </div>
-                                </div>
-
-                                <!-- Upload Area -->
-                                <div v-if="!logoPreview">
-                                    <label
-                                        for="logo"
-                                        class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition-colors"
-                                    >
-                                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                                            <Upload class="w-8 h-8 mb-2 text-gray-400" />
-                                            <p class="mb-2 text-sm text-gray-500">
-                                                <span class="font-semibold">Click to upload</span> or drag and drop
-                                            </p>
-                                            <p class="text-xs text-gray-500">
-                                                PNG, JPG, GIF, SVG, WEBP (MAX. 2MB)
-                                            </p>
-                                        </div>
-                                        <input
-                                            id="logo"
-                                            type="file"
-                                            accept="image/*"
-                                            class="hidden"
-                                            @change="handleLogoChange"
-                                        />
-                                    </label>
-                                </div>
-                            </div>
-
-                            <Button
-                                type="submit"
-                                :disabled="!logoForm.logo || logoForm.processing"
-                                class="bg-[#1e3b3b] hover:bg-[#234444]"
-                            >
-                                <span v-if="logoForm.processing">Uploading...</span>
-                                <span v-else>Add Logo</span>
-                            </Button>
-                        </form>
-                    </div>
-
-                    <!-- Existing Logos Grid -->
-                    <div v-if="partnerLogos.length > 0">
-                        <h3 class="text-lg font-semibold mb-4">Partner Logos ({{ partnerLogos.length }})</h3>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-                            <div
-                                v-for="logo in partnerLogos"
-                                :key="logo.id"
-                                class="relative group border border-gray-200 rounded-lg p-4 bg-white hover:shadow-lg transition-all"
-                            >
-                                <!-- Logo Image -->
-                                <div class="flex items-center justify-center h-32 mb-2">
-                                    <img
-                                        :src="logo.logo_url"
-                                        :alt="logo.company_name ? `شعار شركة ${logo.company_name}` : 'شعار شريك Attenda'"
-                                        class="max-h-full max-w-full object-contain"
-                                    />
-                                </div>
-
-                                <!-- Company Name -->
-                                <p
-                                    v-if="logo.company_name"
-                                    class="text-sm font-medium text-gray-700 text-center mb-2 truncate"
-                                    :title="logo.company_name"
-                                >
-                                    {{ logo.company_name }}
-                                </p>
-                                <p
-                                    v-else
-                                    class="text-xs text-gray-400 text-center mb-2"
-                                >
-                                    No name
-                                </p>
-
-                                <!-- Delete Button -->
-                                <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    class="w-full mt-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                                    @click="deleteLogo(logo.id)"
-                                >
-                                    <Trash2 class="h-4 w-4 mr-2" />
-                                    Delete
-                                </Button>
-                            </div>
+                    <form @submit.prevent="handleSubmit" class="space-y-6">
+                        <!-- Text 1 -->
+                        <div class="space-y-2">
+                            <Label for="text1">Text 1 (Main Heading)</Label>
+                            <Input
+                                id="text1"
+                                v-model="form.text1"
+                                type="text"
+                                placeholder="Enter text 1"
+                                :class="{ 'border-red-500': form.errors.text1 }"
+                            />
+                            <p v-if="form.errors.text1" class="text-sm text-red-500">
+                                {{ form.errors.text1 }}
+                            </p>
                         </div>
-                    </div>
 
-                    <!-- Empty State -->
-                    <div
-                        v-else
-                        class="text-center py-12 border border-dashed border-gray-300 rounded-lg"
-                    >
-                        <Building2 class="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                        <p class="text-gray-600">
-                            No partner logos added yet. Add your first logo above.
-                        </p>
-                    </div>
+                        <!-- Text 2 -->
+                        <div class="space-y-2">
+                            <Label for="text2">Text 2 (Description)</Label>
+                            <textarea
+                                id="text2"
+                                v-model="form.text2"
+                                rows="4"
+                                class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                placeholder="Enter text 2"
+                                :class="{ 'border-red-500': form.errors.text2 }"
+                            />
+                            <p v-if="form.errors.text2" class="text-sm text-red-500">
+                                {{ form.errors.text2 }}
+                            </p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <Button
+                            type="submit"
+                            :disabled="form.processing"
+                            class="bg-[#1e3b3b] hover:bg-[#234444]"
+                        >
+                            <Save class="h-4 w-4 mr-2" />
+                            <span v-if="form.processing">Saving...</span>
+                            <span v-else>Save Changes</span>
+                        </Button>
+                    </form>
                 </CardContent>
             </Card>
+
+            <!-- Preview Section -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold text-gray-900">Preview</h3>
+
+                <!-- Section 1 Preview -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <p class="text-2xl font-semibold text-gray-900">
+                        {{ form.text1 || 'Finally, a performance management platform that works your way.' }}
+                    </p>
+                </div>
+
+                <!-- Section 2 Preview -->
+                <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                    <p class="text-lg text-gray-700 leading-relaxed">
+                        {{ form.text2 || 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.' }}
+                    </p>
+                </div>
+            </div>
         </div>
     </AdminLayout>
 </template>

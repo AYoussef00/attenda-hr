@@ -32,6 +32,8 @@ const props = defineProps<{
         company_name?: string;
         testimonial?: string;
     }>;
+    settingsText1?: string;
+    settingsText2?: string;
 }>();
 
 const showRegister = ref(false);
@@ -188,7 +190,12 @@ const faqData = computed(() => ({
     <div class="min-h-screen bg-white antialiased">
         <Header :on-register-click="openRegister" />
         <main class="relative" role="main">
-            <Hero :on-get-started-click="openRegister" :logos="partnerLogos" />
+            <Hero 
+                :on-get-started-click="openRegister" 
+                :logos="partnerLogos"
+                :settings-text1="props.settingsText1"
+                :settings-text2="props.settingsText2"
+            />
             <Features />
             <Pricing :plans="plans" :on-select-plan="openRegister" />
             <Testimonials />
