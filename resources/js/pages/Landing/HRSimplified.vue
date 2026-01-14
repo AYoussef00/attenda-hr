@@ -50,6 +50,8 @@ import { CheckCircle2 } from 'lucide-vue-next';
                             alt="HR Management Simplified"
                             class="w-full h-auto object-cover"
                             loading="lazy"
+                            decoding="async"
+                            fetchpriority="low"
                         />
                     </div>
                 </div>

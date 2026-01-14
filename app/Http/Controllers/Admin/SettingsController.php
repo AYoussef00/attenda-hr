@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Admin\PartnerLogo;
 use App\Models\Admin\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -63,6 +64,10 @@ class SettingsController extends Controller
         Setting::setValue('settings_text1', $validated['text1']);
         Setting::setValue('settings_text2', $validated['text2']);
 
+        // Clear cache
+        Cache::forget('settings_text1');
+        Cache::forget('settings_text2');
+
         return back()->with('success', 'Settings texts updated successfully.');
     }
 
@@ -116,6 +121,9 @@ class SettingsController extends Controller
             return back()->withErrors(['logos' => 'No valid images were uploaded.']);
         }
 
+        // Clear cache
+        Cache::forget('landing_partner_logos');
+
         $message = $uploadedCount === 1 
             ? 'Partner logo added successfully.' 
             : "{$uploadedCount} partner logos added successfully.";
@@ -136,6 +144,9 @@ class SettingsController extends Controller
         }
 
         $logo->delete();
+
+        // Clear cache
+        Cache::forget('landing_partner_logos');
 
         return back()->with('success', 'Partner logo deleted successfully.');
     }

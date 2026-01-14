@@ -349,6 +349,8 @@ const submitDemoRequest = () => {
                             :alt="logo.company_name ? `شعار شركة ${logo.company_name}` : 'شعار شريك Attenda'"
                             class="max-h-full w-auto max-w-[280px] object-contain"
                             loading="lazy"
+                            decoding="async"
+                            fetchpriority="low"
                         />
                     </div>
                 </div>

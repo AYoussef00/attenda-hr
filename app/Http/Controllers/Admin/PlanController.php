@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Plan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class PlanController extends Controller
@@ -60,6 +61,9 @@ class PlanController extends Controller
 
         Plan::create($validated);
 
+        // Clear cache
+        Cache::forget('landing_plans');
+
         return redirect()->route('admin.plans.index')
             ->with('success', 'Plan created successfully.');
     }
@@ -108,6 +112,9 @@ class PlanController extends Controller
 
         $plan->update($validated);
 
+        // Clear cache
+        Cache::forget('landing_plans');
+
         return redirect()->route('admin.plans.index')
             ->with('success', 'Plan updated successfully.');
     }
@@ -125,6 +132,9 @@ class PlanController extends Controller
         }
 
         $plan->delete();
+
+        // Clear cache
+        Cache::forget('landing_plans');
 
         return redirect()->route('admin.plans.index')
             ->with('success', 'Plan deleted successfully.');

@@ -1,18 +1,21 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { defineAsyncComponent } from 'vue';
 import Header from './Header.vue';
 import Hero from './Hero.vue';
-import HRSimplified from './HRSimplified.vue';
-import PayrollManagement from './PayrollManagement.vue';
-import Features from './Features.vue';
-import Pricing from './Pricing.vue';
-import Testimonials from './Testimonials.vue';
-import CTA from './CTA.vue';
-import About from './About.vue';
-import ChatWidget from '@/components/ChatWidget.vue';
-import Footer from './Footer.vue';
-import CompanyRegisterForm from '@/components/CompanyRegisterForm.vue';
+
+// Lazy load components that are below the fold
+const HRSimplified = defineAsyncComponent(() => import('./HRSimplified.vue'));
+const PayrollManagement = defineAsyncComponent(() => import('./PayrollManagement.vue'));
+const Features = defineAsyncComponent(() => import('./Features.vue'));
+const Pricing = defineAsyncComponent(() => import('./Pricing.vue'));
+const Testimonials = defineAsyncComponent(() => import('./Testimonials.vue'));
+const CTA = defineAsyncComponent(() => import('./CTA.vue'));
+const About = defineAsyncComponent(() => import('./About.vue'));
+const ChatWidget = defineAsyncComponent(() => import('@/components/ChatWidget.vue'));
+const Footer = defineAsyncComponent(() => import('./Footer.vue'));
+const CompanyRegisterForm = defineAsyncComponent(() => import('@/components/CompanyRegisterForm.vue'));
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 const props = defineProps<{

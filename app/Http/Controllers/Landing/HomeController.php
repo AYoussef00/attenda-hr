@@ -7,6 +7,7 @@ use App\Models\Admin\Plan;
 use App\Models\Admin\PartnerLogo;
 use App\Models\Admin\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -17,90 +18,101 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        // Get all plans from database (excluding Enterprise if exists)
-        $allPlans = Plan::where('name', '!=', 'Enterprise')
-            ->orderBy('price', 'asc')
-            ->get();
-        $totalPlans = $allPlans->count();
-        
-        $plans = $allPlans->map(function ($plan, $index) use ($totalPlans) {
-            // Mark the middle plan as popular (if there are 3 or more plans)
-            $isPopular = $totalPlans >= 3 && $index === 1;
+        // Cache plans for 1 hour (3600 seconds)
+        $plans = Cache::remember('landing_plans', 3600, function () {
+            // Get all plans from database (excluding Enterprise if exists)
+            $allPlans = Plan::where('name', '!=', 'Enterprise')
+                ->orderBy('price', 'asc')
+                ->get(['id', 'name', 'price', 'yearly_price', 'max_employees', 'features']);
+            $totalPlans = $allPlans->count();
             
-            // Format features - if features is an array, use it; otherwise create default features
-            $features = $plan->features ?? [];
-            
-            // If features is empty, create default features based on plan
-            if (empty($features)) {
-                $features = [
-                    "Up to {$plan->max_employees} employees",
-                    'Basic employee management',
-                    'Attendance tracking',
-                    'Leave management',
-                    'Email support',
-                ];
-            }
-            
-            return [
-                'id' => $plan->id,
-                'name' => $plan->name,
-                'price' => number_format($plan->price, 0), // Remove decimals for display
-                'price_raw' => $plan->price, // Keep raw price for calculations
-                'yearly_price' => $plan->yearly_price !== null ? number_format($plan->yearly_price, 0) : null,
-                'yearly_price_raw' => $plan->yearly_price,
-                'max_employees' => $plan->max_employees,
-                'features' => $features,
-                'popular' => $isPopular,
-                'description' => $this->getPlanDescription($plan->name, $plan->max_employees),
-            ];
-        })
-        ->values()
-        ->toArray();
-
-        // Add Enterprise plan at the end (without price)
-        $enterprisePlan = [
-            'id' => 'enterprise',
-            'name' => 'Enterprise',
-            'price' => 'Custom',
-            'price_raw' => null,
-            'max_employees' => null,
-            'features' => [
-                'Unlimited employees',
-                'Advanced employee management',
-                'Real-time attendance tracking',
-                'Comprehensive leave management',
-                'Priority support',
-                'Custom integrations',
-                'Dedicated account manager',
-                'Advanced security & compliance',
-                'Custom reporting & analytics',
-                'API access',
-            ],
-            'popular' => false,
-            'description' => 'Tailored solutions for large organizations',
-        ];
-
-        $plans[] = $enterprisePlan;
-
-        // Get active partner logos
-        $partnerLogos = PartnerLogo::where('is_active', true)
-            ->orderBy('display_order')
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($logo) {
+            $formattedPlans = $allPlans->map(function ($plan, $index) use ($totalPlans) {
+                // Mark the middle plan as popular (if there are 3 or more plans)
+                $isPopular = $totalPlans >= 3 && $index === 1;
+                
+                // Format features - if features is an array, use it; otherwise create default features
+                $features = $plan->features ?? [];
+                
+                // If features is empty, create default features based on plan
+                if (empty($features)) {
+                    $features = [
+                        "Up to {$plan->max_employees} employees",
+                        'Basic employee management',
+                        'Attendance tracking',
+                        'Leave management',
+                        'Email support',
+                    ];
+                }
+                
                 return [
-                    'id' => $logo->id,
-                    'logo_url' => $logo->logo_path ? asset('storage/' . $logo->logo_path) : null,
-                    'company_name' => $logo->company_name,
-                    'testimonial' => $logo->testimonial,
+                    'id' => $plan->id,
+                    'name' => $plan->name,
+                    'price' => number_format($plan->price, 0), // Remove decimals for display
+                    'price_raw' => $plan->price, // Keep raw price for calculations
+                    'yearly_price' => $plan->yearly_price !== null ? number_format($plan->yearly_price, 0) : null,
+                    'yearly_price_raw' => $plan->yearly_price,
+                    'max_employees' => $plan->max_employees,
+                    'features' => $features,
+                    'popular' => $isPopular,
+                    'description' => $this->getPlanDescription($plan->name, $plan->max_employees),
                 ];
             })
             ->values()
             ->toArray();
 
-        // Get settings texts from database
-        $settingsText1 = Setting::getValue('settings_text1', 'Finally, a performance management platform that works your way.');
-        $settingsText2 = Setting::getValue('settings_text2', 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.');
+            // Add Enterprise plan at the end (without price)
+            $enterprisePlan = [
+                'id' => 'enterprise',
+                'name' => 'Enterprise',
+                'price' => 'Custom',
+                'price_raw' => null,
+                'max_employees' => null,
+                'features' => [
+                    'Unlimited employees',
+                    'Advanced employee management',
+                    'Real-time attendance tracking',
+                    'Comprehensive leave management',
+                    'Priority support',
+                    'Custom integrations',
+                    'Dedicated account manager',
+                    'Advanced security & compliance',
+                    'Custom reporting & analytics',
+                    'API access',
+                ],
+                'popular' => false,
+                'description' => 'Tailored solutions for large organizations',
+            ];
+
+            $formattedPlans[] = $enterprisePlan;
+            return $formattedPlans;
+        });
+
+        // Cache partner logos for 1 hour
+        $partnerLogos = Cache::remember('landing_partner_logos', 3600, function () {
+            return PartnerLogo::where('is_active', true)
+                ->orderBy('display_order')
+                ->orderBy('created_at', 'desc')
+                ->get(['id', 'logo_path', 'company_name', 'testimonial'])
+                ->map(function ($logo) {
+                    return [
+                        'id' => $logo->id,
+                        'logo_url' => $logo->logo_path ? asset('storage/' . $logo->logo_path) : null,
+                        'company_name' => $logo->company_name,
+                        'testimonial' => $logo->testimonial,
+                    ];
+                })
+                ->values()
+                ->toArray();
+        });
+
+        // Cache settings texts for 1 hour
+        $settingsText1 = Cache::remember('settings_text1', 3600, function () {
+            return Setting::getValue('settings_text1', 'Finally, a performance management platform that works your way.');
+        });
+        
+        $settingsText2 = Cache::remember('settings_text2', 3600, function () {
+            return Setting::getValue('settings_text2', 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.');
+        });
 
         return Inertia::render('Landing/Index', [
             'plans' => $plans,

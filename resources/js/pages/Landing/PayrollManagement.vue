@@ -20,6 +20,8 @@ import { CheckCircle2 } from 'lucide-vue-next';
                             alt="Payroll Management"
                             class="w-full h-auto object-cover"
                             loading="lazy"
+                            decoding="async"
+                            fetchpriority="low"
                         />
                     </div>
                 </div>
