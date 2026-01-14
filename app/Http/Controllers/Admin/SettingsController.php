@@ -20,9 +20,27 @@ class SettingsController extends Controller
         $text1 = Setting::getValue('settings_text1', 'Finally, a performance management platform that works your way.');
         $text2 = Setting::getValue('settings_text2', 'Bring goals, feedback, and competencies together in one place with a platform that adapts to your process — not the other way around.');
 
+        // Get all partner logos
+        $partnerLogos = PartnerLogo::orderBy('display_order')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($logo) {
+                return [
+                    'id' => $logo->id,
+                    'logo_url' => Storage::disk('public')->url($logo->logo_path),
+                    'company_name' => $logo->company_name,
+                    'testimonial' => $logo->testimonial,
+                    'display_order' => $logo->display_order,
+                    'is_active' => $logo->is_active,
+                ];
+            })
+            ->values()
+            ->toArray();
+
         return Inertia::render('Admin/Settings/Index', [
             'text1' => $text1,
             'text2' => $text2,
+            'partnerLogos' => $partnerLogos,
         ]);
     }
 

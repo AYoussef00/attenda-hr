@@ -102,6 +102,11 @@ Route::prefix('system')->group(function () {
         // Settings
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('admin.settings.index');
         Route::post('/settings/update-texts', [\App\Http\Controllers\Admin\SettingsController::class, 'updateTexts'])->name('admin.settings.update-texts');
+        
+        // Partner Logos
+        Route::post('/settings/partner-logos', [\App\Http\Controllers\Admin\SettingsController::class, 'storePartnerLogo'])->name('admin.settings.partner-logos.store');
+        Route::delete('/settings/partner-logos/{id}', [\App\Http\Controllers\Admin\SettingsController::class, 'deletePartnerLogo'])->name('admin.settings.partner-logos.delete');
+        Route::post('/settings/partner-logos/update-order', [\App\Http\Controllers\Admin\SettingsController::class, 'updatePartnerLogoOrder'])->name('admin.settings.partner-logos.update-order');
     });
 });
 

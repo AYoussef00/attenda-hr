@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import admin from '@/routes/admin';
 import { type BreadcrumbItem } from '@/types';
-import { Head, useForm } from '@inertiajs/vue3';
-import { Save } from 'lucide-vue-next';
+import { Head, useForm, router } from '@inertiajs/vue3';
+import { Save, Upload, Trash2, Image as ImageIcon } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -20,9 +21,19 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+interface PartnerLogo {
+    id: number;
+    logo_url: string;
+    company_name?: string;
+    testimonial?: string;
+    display_order: number;
+    is_active: boolean;
+}
+
 const props = defineProps<{
     text1?: string;
     text2?: string;
+    partnerLogos?: PartnerLogo[];
 }>();
 
 // Form for editing texts
@@ -38,6 +49,48 @@ const handleSubmit = () => {
             // Success handled by flash message
         },
     });
+};
+
+// Partner Logo Management
+const logoForm = useForm({
+    logo: null as File | null,
+    company_name: '',
+    testimonial: '',
+});
+
+const logoFileInput = ref<HTMLInputElement | null>(null);
+
+const handleLogoFileChange = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        logoForm.logo = target.files[0];
+    }
+};
+
+const handleAddLogo = () => {
+    if (!logoForm.logo) {
+        alert('Please select an image file');
+        return;
+    }
+
+    logoForm.post('/system/settings/partner-logos', {
+        preserveScroll: true,
+        onSuccess: () => {
+            logoForm.reset();
+            logoForm.logo = null;
+            if (logoFileInput.value) {
+                logoFileInput.value.value = '';
+            }
+        },
+    });
+};
+
+const handleDeleteLogo = (id: number) => {
+    if (confirm('Are you sure you want to delete this logo?')) {
+        router.delete(`/system/settings/partner-logos/${id}`, {
+            preserveScroll: true,
+        });
+    }
 };
 </script>
 
@@ -121,6 +174,120 @@ const handleSubmit = () => {
                     </p>
                 </div>
             </div>
+
+            <!-- Partner Logos Management -->
+            <Card>
+                <CardHeader>
+                    <CardTitle>Partner Logos</CardTitle>
+                    <CardDescription>
+                        Manage partner logos that appear on the landing page
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <!-- Add New Logo Form -->
+                    <div class="mb-8 p-4 border border-gray-200 rounded-lg bg-gray-50">
+                        <h4 class="text-sm font-semibold text-gray-900 mb-4">Add New Logo</h4>
+                        <form @submit.prevent="handleAddLogo" class="space-y-4">
+                            <div class="space-y-2">
+                                <Label for="logo">Logo Image <span class="text-red-500">*</span></Label>
+                                <div class="flex items-center gap-4">
+                                    <input
+                                        ref="logoFileInput"
+                                        id="logo"
+                                        type="file"
+                                        accept="image/*"
+                                        @change="handleLogoFileChange"
+                                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        :class="{ 'border-red-500': logoForm.errors.logo }"
+                                    />
+                                    <Button
+                                        type="submit"
+                                        :disabled="logoForm.processing || !logoForm.logo"
+                                        class="bg-[#1e3b3b] hover:bg-[#234444]"
+                                    >
+                                        <Upload class="h-4 w-4 mr-2" />
+                                        <span v-if="logoForm.processing">Uploading...</span>
+                                        <span v-else>Upload</span>
+                                    </Button>
+                                </div>
+                                <p v-if="logoForm.errors.logo" class="text-sm text-red-500">
+                                    {{ logoForm.errors.logo }}
+                                </p>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-2">
+                                    <Label for="company_name">Company Name (Optional)</Label>
+                                    <Input
+                                        id="company_name"
+                                        v-model="logoForm.company_name"
+                                        type="text"
+                                        placeholder="Company name"
+                                        :class="{ 'border-red-500': logoForm.errors.company_name }"
+                                    />
+                                    <p v-if="logoForm.errors.company_name" class="text-sm text-red-500">
+                                        {{ logoForm.errors.company_name }}
+                                    </p>
+                                </div>
+
+                                <div class="space-y-2">
+                                    <Label for="testimonial">Testimonial (Optional)</Label>
+                                    <Input
+                                        id="testimonial"
+                                        v-model="logoForm.testimonial"
+                                        type="text"
+                                        placeholder="Testimonial"
+                                        :class="{ 'border-red-500': logoForm.errors.testimonial }"
+                                    />
+                                    <p v-if="logoForm.errors.testimonial" class="text-sm text-red-500">
+                                        {{ logoForm.errors.testimonial }}
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Existing Logos -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-semibold text-gray-900">Existing Logos ({{ props.partnerLogos?.length || 0 }})</h4>
+                        
+                        <div v-if="!props.partnerLogos || props.partnerLogos.length === 0" class="text-center py-8 text-gray-500">
+                            <ImageIcon class="h-12 w-12 mx-auto mb-2 text-gray-400" />
+                            <p>No logos added yet. Add your first logo above.</p>
+                        </div>
+
+                        <div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                            <div
+                                v-for="logo in props.partnerLogos"
+                                :key="logo.id"
+                                class="relative group border border-gray-200 rounded-lg p-4 bg-white hover:shadow-md transition-shadow"
+                            >
+                                <div class="aspect-square flex items-center justify-center bg-gray-50 rounded mb-2 overflow-hidden">
+                                    <img
+                                        :src="logo.logo_url"
+                                        :alt="logo.company_name || 'Partner Logo'"
+                                        class="max-w-full max-h-full object-contain"
+                                    />
+                                </div>
+                                <div class="text-center">
+                                    <p v-if="logo.company_name" class="text-sm font-medium text-gray-900 truncate">
+                                        {{ logo.company_name }}
+                                    </p>
+                                    <p v-else class="text-xs text-gray-400">No company name</p>
+                                </div>
+                                <Button
+                                    @click="handleDeleteLogo(logo.id)"
+                                    variant="destructive"
+                                    size="sm"
+                                    class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                    <Trash2 class="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     </AdminLayout>
 </template>
