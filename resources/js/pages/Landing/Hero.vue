@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CheckCircle2, Lock, XCircle, Play } from 'lucide-vue-next';
+import { CheckCircle2, Lock, XCircle } from 'lucide-vue-next';
 import { router, usePage, useForm } from '@inertiajs/vue3';
 import { computed, ref } from 'vue';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -131,17 +131,6 @@ const submitDemoRequest = () => {
                                 </span>
                                 <span><span class="font-semibold">4.6</span> on Capterra</span>
                         </div>
-                        </div>
-
-                        <!-- Watch Now Button (video icon + text) -->
-                        <div>
-                            <Button
-                                type="button"
-                                class="inline-flex items-center gap-2 rounded-full bg-black px-5 py-2 text-sm font-medium text-white shadow-md hover:bg-black/90 transition-colors"
-                            >
-                                <Play class="h-4 w-4" />
-                                <span>Watch Now</span>
-                            </Button>
                         </div>
                     </div>
                 </div>
