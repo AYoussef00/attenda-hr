@@ -337,17 +337,17 @@ const submitDemoRequest = () => {
                     Trusted by 600+ Organizations
                 </p>
                 <div
-                    class="flex flex-wrap items-center justify-center gap-x-14 gap-y-12 opacity-80"
+                    class="flex flex-wrap items-center justify-center gap-x-14 gap-y-12"
                 >
                     <div
                         v-for="logo in props.logos"
                         :key="logo.id"
-                        class="flex h-14 sm:h-20 items-center justify-center grayscale hover:grayscale-0 transition-all duration-200"
+                        class="flex h-20 sm:h-28 items-center justify-center transition-all duration-200 hover:scale-105"
                     >
                         <img
                             :src="logo.logo_url"
                             :alt="logo.company_name ? `شعار شركة ${logo.company_name}` : 'شعار شريك Attenda'"
-                            class="max-h-full w-auto max-w-[220px] object-contain"
+                            class="max-h-full w-auto max-w-[280px] object-contain"
                             loading="lazy"
                         />
                     </div>
