@@ -32,24 +32,46 @@ const isAuthenticated = computed(() => {
     return !!page.props.auth?.user;
 });
 
+const selectedCountryCode = ref('+20'); // Default to Egypt
+const countryCodes = [
+    { code: '+20', country: 'Egypt', flag: '🇪🇬' },
+    { code: '+966', country: 'Saudi Arabia', flag: '🇸🇦' },
+    { code: '+971', country: 'UAE', flag: '🇦🇪' },
+    { code: '+965', country: 'Kuwait', flag: '🇰🇼' },
+    { code: '+974', country: 'Qatar', flag: '🇶🇦' },
+    { code: '+973', country: 'Bahrain', flag: '🇧🇭' },
+    { code: '+968', country: 'Oman', flag: '🇴🇲' },
+    { code: '+1', country: 'USA', flag: '🇺🇸' },
+    { code: '+44', country: 'UK', flag: '🇬🇧' },
+    { code: '+33', country: 'France', flag: '🇫🇷' },
+    { code: '+49', country: 'Germany', flag: '🇩🇪' },
+];
+
 const demoForm = useForm({
     first_name: '',
     business_email: '',
     company_name: '',
     phone_number: '',
     number_of_employees: '',
-    company_headquarters: 'Saudi Arabia',
+    company_headquarters: 'Egypt',
     choose_time_slot: 'No',
 });
 
 const showSuccessMessage = ref(false);
 
 const submitDemoRequest = () => {
-    demoForm.post('/demo-request', {
+    // Combine country code with phone number
+    const fullPhoneNumber = selectedCountryCode.value + ' ' + demoForm.phone_number;
+    
+    demoForm.transform((data) => ({
+        ...data,
+        phone_number: fullPhoneNumber,
+    })).post('/demo-request', {
         preserveScroll: true,
         onSuccess: () => {
             showSuccessMessage.value = true;
             demoForm.reset();
+            selectedCountryCode.value = '+20'; // Reset to Egypt
             setTimeout(() => {
                 showSuccessMessage.value = false;
             }, 5000);
@@ -248,21 +270,25 @@ const submitDemoRequest = () => {
                                     Phone number <span class="text-red-500">*</span>
                                 </Label>
                                 <div class="relative">
-                                    <div
-                                        class="absolute left-2 top-1/2 flex -translate-y-1/2 items-center gap-2 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700"
+                                    <select
+                                        v-model="selectedCountryCode"
+                                        class="absolute left-2 top-1/2 z-10 h-7 -translate-y-1/2 rounded-full border border-slate-200 bg-white px-2 py-1 text-xs text-slate-700 focus:outline-none focus:ring-1 focus:ring-slate-900 cursor-pointer"
                                     >
-                                        <span class="text-[11px] font-medium">SA</span>
-                                        <span class="h-3 w-px bg-slate-200" />
-                                        <span class="font-semibold">+966</span>
-                                        <Lock class="ml-1 h-3 w-3 text-slate-400" />
-                                    </div>
+                                        <option
+                                            v-for="country in countryCodes"
+                                            :key="country.code"
+                                            :value="country.code"
+                                        >
+                                            {{ country.flag }} {{ country.code }}
+                                        </option>
+                                    </select>
                                     <Input
                                         id="phone_number"
                                         v-model="demoForm.phone_number"
                                         type="tel"
                                         required
-                                        class="h-11 rounded-xl border-slate-200 bg-slate-50/60 pl-32 focus:border-slate-900 focus:ring-slate-900"
-                                        placeholder="5XX XXX XXX"
+                                        class="h-11 rounded-xl border-slate-200 bg-slate-50/60 pl-28 focus:border-slate-900 focus:ring-slate-900"
+                                        placeholder="Enter phone number"
                                     />
                                 </div>
                             </div>
@@ -279,6 +305,7 @@ const submitDemoRequest = () => {
                                     required
                                 class="flex h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
                                 >
+                                    <option value="Egypt">Egypt</option>
                                     <option value="Saudi Arabia">Saudi Arabia</option>
                                     <option value="UAE">UAE</option>
                                     <option value="Kuwait">Kuwait</option>
