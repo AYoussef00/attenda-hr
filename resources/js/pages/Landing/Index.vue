@@ -3,6 +3,8 @@ import { Head } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
 import Header from './Header.vue';
 import Hero from './Hero.vue';
+import HRSimplified from './HRSimplified.vue';
+import PayrollManagement from './PayrollManagement.vue';
 import Features from './Features.vue';
 import Pricing from './Pricing.vue';
 import Testimonials from './Testimonials.vue';
@@ -196,6 +198,8 @@ const faqData = computed(() => ({
                 :settings-text1="props.settingsText1"
                 :settings-text2="props.settingsText2"
             />
+            <HRSimplified />
+            <PayrollManagement />
             <Features />
             <Pricing :plans="plans" :on-select-plan="openRegister" />
             <Testimonials />
