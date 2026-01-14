@@ -26,7 +26,7 @@ import { CheckCircle2 } from 'lucide-vue-next';
 
                 <!-- Right Side: Text Content -->
                 <div class="space-y-8 order-1 lg:order-2">
-                    <h2 id="payroll-management-heading" class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-tight">
+                    <h2 id="payroll-management-heading" class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                         PAYROLL MANAGEMENT
                     </h2>
                     <p class="text-xl lg:text-2xl font-light text-gray-600 leading-relaxed">

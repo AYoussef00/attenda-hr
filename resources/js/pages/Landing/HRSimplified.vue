@@ -14,7 +14,7 @@ import { CheckCircle2 } from 'lucide-vue-next';
             <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                 <!-- Left Side: Text Content -->
                 <div class="space-y-8">
-                    <h2 id="hr-simplified-heading" class="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-tight">
+                    <h2 id="hr-simplified-heading" class="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
                         HR MANAGEMENT SIMPLIFIED
                     </h2>
                     <p class="text-xl lg:text-2xl font-light text-gray-600 leading-relaxed">
