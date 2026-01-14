@@ -25,9 +25,9 @@ class SettingsController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($logo) {
-                // Use asset() helper for public storage URLs
+                // Use asset() helper - works better on server
                 $logoUrl = $logo->logo_path 
-                    ? Storage::disk('public')->url($logo->logo_path)
+                    ? asset('storage/' . $logo->logo_path)
                     : null;
                 
                 return [

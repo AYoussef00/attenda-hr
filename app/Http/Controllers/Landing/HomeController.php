@@ -90,7 +90,7 @@ class HomeController extends Controller
             ->map(function ($logo) {
                 return [
                     'id' => $logo->id,
-                    'logo_url' => Storage::disk('public')->url($logo->logo_path),
+                    'logo_url' => $logo->logo_path ? asset('storage/' . $logo->logo_path) : null,
                     'company_name' => $logo->company_name,
                     'testimonial' => $logo->testimonial,
                 ];
