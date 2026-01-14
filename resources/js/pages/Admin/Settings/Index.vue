@@ -53,31 +53,52 @@ const handleSubmit = () => {
 
 // Partner Logo Management
 const logoForm = useForm({
-    logo: null as File | null,
+    logos: [] as File[],
     company_name: '',
     testimonial: '',
 });
 
 const logoFileInput = ref<HTMLInputElement | null>(null);
+const selectedFiles = ref<File[]>([]);
 
 const handleLogoFileChange = (event: Event) => {
     const target = event.target as HTMLInputElement;
-    if (target.files && target.files[0]) {
-        logoForm.logo = target.files[0];
+    if (target.files && target.files.length > 0) {
+        selectedFiles.value = Array.from(target.files);
+        logoForm.logos = Array.from(target.files);
     }
 };
 
 const handleAddLogo = () => {
-    if (!logoForm.logo) {
-        alert('Please select an image file');
+    if (selectedFiles.value.length === 0) {
+        alert('Please select at least one image file');
         return;
     }
 
-    logoForm.post('/system/settings/partner-logos', {
+    // Create FormData for file uploads
+    const formData = new FormData();
+    
+    // Append all files with 'logos[]' key for Laravel to recognize as array
+    selectedFiles.value.forEach((file) => {
+        formData.append('logos[]', file);
+    });
+    
+    // Append optional fields
+    if (logoForm.company_name) {
+        formData.append('company_name', logoForm.company_name);
+    }
+    if (logoForm.testimonial) {
+        formData.append('testimonial', logoForm.testimonial);
+    }
+
+    // Use router.post with FormData
+    router.post('/system/settings/partner-logos', formData, {
         preserveScroll: true,
+        forceFormData: true,
         onSuccess: () => {
             logoForm.reset();
-            logoForm.logo = null;
+            logoForm.logos = [];
+            selectedFiles.value = [];
             if (logoFileInput.value) {
                 logoFileInput.value.value = '';
             }
@@ -189,29 +210,33 @@ const handleDeleteLogo = (id: number) => {
                         <h4 class="text-sm font-semibold text-gray-900 mb-4">Add New Logo</h4>
                         <form @submit.prevent="handleAddLogo" class="space-y-4">
                             <div class="space-y-2">
-                                <Label for="logo">Logo Image <span class="text-red-500">*</span></Label>
+                                <Label for="logo">Logo Images <span class="text-red-500">*</span> (You can select multiple images)</Label>
                                 <div class="flex items-center gap-4">
                                     <input
                                         ref="logoFileInput"
                                         id="logo"
                                         type="file"
                                         accept="image/*"
+                                        multiple
                                         @change="handleLogoFileChange"
                                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                        :class="{ 'border-red-500': logoForm.errors.logo }"
+                                        :class="{ 'border-red-500': logoForm.errors.logos }"
                                     />
                                     <Button
                                         type="submit"
-                                        :disabled="logoForm.processing || !logoForm.logo"
+                                        :disabled="logoForm.processing || selectedFiles.length === 0"
                                         class="bg-[#1e3b3b] hover:bg-[#234444]"
                                     >
                                         <Upload class="h-4 w-4 mr-2" />
                                         <span v-if="logoForm.processing">Uploading...</span>
-                                        <span v-else>Upload</span>
+                                        <span v-else>Upload {{ selectedFiles.length > 0 ? `(${selectedFiles.length})` : '' }}</span>
                                     </Button>
                                 </div>
-                                <p v-if="logoForm.errors.logo" class="text-sm text-red-500">
-                                    {{ logoForm.errors.logo }}
+                                <p v-if="selectedFiles.length > 0" class="text-sm text-gray-600">
+                                    {{ selectedFiles.length }} file(s) selected
+                                </p>
+                                <p v-if="logoForm.errors.logos" class="text-sm text-red-500">
+                                    {{ logoForm.errors.logos }}
                                 </p>
                             </div>
 
@@ -264,10 +289,16 @@ const handleDeleteLogo = (id: number) => {
                             >
                                 <div class="aspect-square flex items-center justify-center bg-gray-50 rounded mb-2 overflow-hidden">
                                     <img
+                                        v-if="logo.logo_url"
                                         :src="logo.logo_url"
                                         :alt="logo.company_name || 'Partner Logo'"
                                         class="max-w-full max-h-full object-contain"
+                                        @error="(e) => { e.target.style.display = 'none'; }"
                                     />
+                                    <div v-else class="flex flex-col items-center justify-center text-gray-400">
+                                        <ImageIcon class="h-8 w-8 mb-1" />
+                                        <span class="text-xs">No image</span>
+                                    </div>
                                 </div>
                                 <div class="text-center">
                                     <p v-if="logo.company_name" class="text-sm font-medium text-gray-900 truncate">

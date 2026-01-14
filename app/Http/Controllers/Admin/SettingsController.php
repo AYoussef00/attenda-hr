@@ -25,9 +25,14 @@ class SettingsController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($logo) {
+                // Use asset() helper for public storage URLs
+                $logoUrl = $logo->logo_path 
+                    ? Storage::disk('public')->url($logo->logo_path)
+                    : null;
+                
                 return [
                     'id' => $logo->id,
-                    'logo_url' => Storage::disk('public')->url($logo->logo_path),
+                    'logo_url' => $logoUrl,
                     'company_name' => $logo->company_name,
                     'testimonial' => $logo->testimonial,
                     'display_order' => $logo->display_order,
@@ -62,31 +67,60 @@ class SettingsController extends Controller
     }
 
     /**
-     * Store a new partner logo.
+     * Store new partner logos (supports multiple uploads).
      */
     public function storePartnerLogo(Request $request)
     {
+        // Handle both single file and array of files
+        $files = $request->has('logos') ? $request->file('logos') : [];
+        
+        // If logos is not an array, try to get it as single file
+        if (empty($files) && $request->hasFile('logo')) {
+            $files = [$request->file('logo')];
+        }
+
         $validated = $request->validate([
-            'logo' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'logos' => ['sometimes', 'array'],
+            'logos.*' => ['required', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
+            'logo' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif,svg,webp', 'max:2048'],
             'company_name' => ['nullable', 'string', 'max:255'],
             'testimonial' => ['nullable', 'string', 'max:500'],
         ]);
 
-        // Store the logo
-        $logoPath = $request->file('logo')->store('partner-logos', 'public');
+        if (empty($files)) {
+            return back()->withErrors(['logos' => 'Please select at least one image file.']);
+        }
 
         // Get the highest display order
         $maxOrder = PartnerLogo::max('display_order') ?? 0;
+        $uploadedCount = 0;
 
-        PartnerLogo::create([
-            'logo_path' => $logoPath,
-            'company_name' => $validated['company_name'] ?? null,
-            'testimonial' => $validated['testimonial'] ?? null,
-            'display_order' => $maxOrder + 1,
-            'is_active' => true,
-        ]);
+        // Store each logo
+        foreach ($files as $index => $logoFile) {
+            if ($logoFile && $logoFile->isValid()) {
+                $logoPath = $logoFile->store('partner-logos', 'public');
 
-        return back()->with('success', 'Partner logo added successfully.');
+                PartnerLogo::create([
+                    'logo_path' => $logoPath,
+                    'company_name' => $validated['company_name'] ?? null,
+                    'testimonial' => $validated['testimonial'] ?? null,
+                    'display_order' => $maxOrder + $index + 1,
+                    'is_active' => true,
+                ]);
+
+                $uploadedCount++;
+            }
+        }
+
+        if ($uploadedCount === 0) {
+            return back()->withErrors(['logos' => 'No valid images were uploaded.']);
+        }
+
+        $message = $uploadedCount === 1 
+            ? 'Partner logo added successfully.' 
+            : "{$uploadedCount} partner logos added successfully.";
+
+        return back()->with('success', $message);
     }
 
     /**
