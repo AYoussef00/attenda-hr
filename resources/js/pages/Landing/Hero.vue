@@ -205,7 +205,7 @@ const submitDemoRequest = () => {
                                     v-model="demoForm.first_name"
                                     type="text"
                                     required
-                                    class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
+                                    class="h-11 rounded-xl border-slate-200 !bg-white !text-gray-900 focus:border-slate-900 focus:ring-slate-900"
                                     placeholder="Enter your name"
                                 />
                             </div>
@@ -218,7 +218,7 @@ const submitDemoRequest = () => {
                                     v-model="demoForm.number_of_employees"
                                     type="text"
                                     required
-                                    class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
+                                    class="h-11 rounded-xl border-slate-200 !bg-white !text-gray-900 focus:border-slate-900 focus:ring-slate-900"
                                     placeholder="Please select"
                                 />
                             </div>
@@ -234,7 +234,7 @@ const submitDemoRequest = () => {
                                     v-model="demoForm.company_name"
                                     type="text"
                                     required
-                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white !text-gray-900 focus:border-slate-900 focus:ring-slate-900"
                                     placeholder="Your company name"
                             />
                         </div>
@@ -250,7 +250,7 @@ const submitDemoRequest = () => {
                                     v-model="demoForm.business_email"
                                     type="email"
                                     required
-                                    class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
+                                    class="h-11 rounded-xl border-slate-200 !bg-white !text-gray-900 focus:border-slate-900 focus:ring-slate-900"
                                     placeholder="you@company.com"
                                 />
                             </div>
@@ -276,7 +276,7 @@ const submitDemoRequest = () => {
                                         v-model="demoForm.phone_number"
                                         type="tel"
                                         required
-                                        class="h-11 rounded-xl border-slate-200 bg-white pl-28 focus:border-slate-900 focus:ring-slate-900"
+                                        class="h-11 rounded-xl border-slate-200 !bg-white !text-gray-900 pl-28 focus:border-slate-900 focus:ring-slate-900"
                                         placeholder="Enter phone number"
                                     />
                                 </div>
@@ -292,7 +292,7 @@ const submitDemoRequest = () => {
                                     id="company_headquarters"
                                     v-model="demoForm.company_headquarters"
                                     required
-                                class="flex h-11 w-full rounded-xl border border-slate-200 !bg-white px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                                class="flex h-11 w-full rounded-xl border border-slate-200 !bg-white px-3 py-2 text-sm !text-gray-900 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
                                 >
                                     <option value="Egypt">Egypt</option>
                                     <option value="Saudi Arabia">Saudi Arabia</option>
@@ -360,16 +360,21 @@ const submitDemoRequest = () => {
 </template>
 
 <style scoped>
-/* Force white background for input fields on mobile */
+/* Force white background and black text for input fields on mobile */
 @media (max-width: 768px) {
     input[type="text"],
     input[type="email"],
     input[type="tel"],
     select {
         background-color: white !important;
+        color: #111827 !important; /* gray-900 */
         -webkit-appearance: none;
         -moz-appearance: none;
         appearance: none;
+    }
+    
+    input::placeholder {
+        color: #9ca3af !important; /* gray-400 for placeholder */
     }
 }
 </style>
