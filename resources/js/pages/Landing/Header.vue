@@ -196,14 +196,13 @@ const smoothScroll = (e: Event, targetId: string) => {
                         About
                     </a>
                     <div class="pt-4 space-y-3 border-t border-gray-200">
-                        <Button
+                        <a
                             v-if="!isAuthenticated"
-                            variant="ghost"
                             @click="onLoginClick"
-                            class="w-full justify-start"
+                            class="block px-4 py-3 text-base font-medium text-gray-900 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
                         >
                             Sign In
-                        </Button>
+                        </a>
                         <Button
                             v-if="!isAuthenticated"
                             @click="onRegisterClick"
