@@ -492,7 +492,7 @@ const industryOptions = [
                                 v-model="form.company.name"
                                 type="text"
                                 placeholder="e.g., Attenda Solutions"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                             />
                             <InputError :message="form.errors['company.name']" />
                         </div>
@@ -503,7 +503,7 @@ const industryOptions = [
                                 id="industry"
                                 v-model="form.company.industry"
                                 name="industry"
-                                class="flex h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="flex h-11 w-full rounded-xl border border-slate-200 !bg-white px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option value="">Select industry</option>
                                 <option
@@ -524,7 +524,7 @@ const industryOptions = [
                                 v-model="form.company.industry_other"
                                 type="text"
                                 placeholder="Type your business type"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                             />
                             <InputError :message="form.errors['company.industry_other']" />
                         </div>
@@ -536,7 +536,7 @@ const industryOptions = [
                                 v-model="form.company.commercial_registration_no"
                                 type="text"
                                 placeholder="e.g., 1234567890"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                             />
                             <InputError :message="form.errors['company.commercial_registration_no']" />
                         </div>
@@ -548,7 +548,7 @@ const industryOptions = [
                                     id="country"
                                     v-model="form.company.country"
                                     name="country"
-                                class="flex h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="flex h-11 w-full rounded-xl border border-slate-200 !bg-white px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
                                 >
                                     <option value="">Select country</option>
                                     <option
@@ -568,7 +568,7 @@ const industryOptions = [
                                     v-model="form.company.city"
                                     type="text"
                                     placeholder="e.g., Cairo"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                                 />
                                 <InputError :message="form.errors['company.city']" />
                             </div>
@@ -581,7 +581,7 @@ const industryOptions = [
                                 v-model="form.company.address"
                                 type="text"
                                 placeholder="Street, district, building"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                             />
                             <InputError :message="form.errors['company.address']" />
                         </div>
@@ -594,7 +594,7 @@ const industryOptions = [
                                     v-model="form.company.phone"
                                     type="text"
                                     placeholder="+20 10 000 0000"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                                 />
                                 <InputError :message="form.errors['company.phone']" />
                             </div>
@@ -605,7 +605,7 @@ const industryOptions = [
                                     v-model="form.company.email"
                                     type="email"
                                     placeholder="hr@company.com"
-                                class="h-11 rounded-xl border-slate-200 bg-slate-50/60 focus:border-slate-900 focus:ring-slate-900"
+                                class="h-11 rounded-xl border-slate-200 !bg-white focus:border-slate-900 focus:ring-slate-900"
                                 />
                                 <InputError :message="form.errors['company.email']" />
                             </div>
@@ -617,7 +617,7 @@ const industryOptions = [
                                 id="size"
                                 v-model="form.company.size"
                                 name="size"
-                                class="flex h-11 w-full rounded-xl border border-slate-200 bg-slate-50/60 px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="flex h-11 w-full rounded-xl border border-slate-200 !bg-white px-3 py-2 text-sm text-slate-800 focus:border-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 disabled:cursor-not-allowed disabled:opacity-50"
                             >
                                 <option value="">Select range</option>
                                 <option value="1-10">1 - 10</option>
@@ -844,4 +844,18 @@ const industryOptions = [
     </div>
 </template>
 
+<style scoped>
+/* Force white background for input fields on mobile */
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+        background-color: white !important;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+}
+</style>
 
