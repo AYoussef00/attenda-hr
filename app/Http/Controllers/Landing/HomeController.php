@@ -15,10 +15,12 @@ class HomeController extends Controller
 {
     /**
      * Display the landing page.
+     * 
+     * Optimized for LCP with aggressive caching and minimal data processing
      */
     public function index(Request $request)
     {
-        // Cache plans for 1 hour (3600 seconds)
+        // Cache plans for 1 hour (3600 seconds) - reduced database queries
         $plans = Cache::remember('landing_plans', 3600, function () {
             // Get all plans from database (excluding Enterprise if exists)
             $allPlans = Plan::where('name', '!=', 'Enterprise')

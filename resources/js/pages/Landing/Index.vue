@@ -251,9 +251,12 @@ const faqData = computed(() => ({
         <script type="application/ld+json" v-html="JSON.stringify(organizationData)" />
         <script type="application/ld+json" v-html="JSON.stringify(breadcrumbData)" />
         <script type="application/ld+json" v-html="JSON.stringify(faqData)" />
-        <!-- Preload critical resources -->
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <!-- Preload critical resources for faster LCP -->
+        <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
+        <link rel="dns-prefetch" href="https://fonts.bunny.net" />
+        
+        {{-- Preload hero section critical image if exists --}}
+        <link v-if="ogImage" rel="preload" as="image" :href="ogImage" fetchpriority="high" />
     </Head>
     <div class="min-h-screen bg-white antialiased">
         <Header :on-register-click="openRegister" />
