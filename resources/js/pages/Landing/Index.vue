@@ -255,7 +255,7 @@ const faqData = computed(() => ({
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin />
         <link rel="dns-prefetch" href="https://fonts.bunny.net" />
         
-        {{-- Preload hero section critical image if exists --}}
+        <!-- Preload hero section critical image if exists -->
         <link v-if="ogImage" rel="preload" as="image" :href="ogImage" fetchpriority="high" />
     </Head>
     <div class="min-h-screen bg-white antialiased">
