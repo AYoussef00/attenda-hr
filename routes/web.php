@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Landing\HomeController;
 use App\Http\Controllers\Landing\ChatController;
+use App\Http\Controllers\Landing\SitemapController;
 use App\Http\Controllers\Admin\RequestController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +10,9 @@ use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+// Sitemap
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // System status page
 Route::get('/status', [StatusController::class, 'index'])->name('status');
