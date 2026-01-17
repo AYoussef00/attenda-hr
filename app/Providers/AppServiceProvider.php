@@ -13,7 +13,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Load helper functions
+        require_once app_path('Helpers/CdnHelper.php');
     }
 
     /**
