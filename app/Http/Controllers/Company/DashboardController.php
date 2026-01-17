@@ -90,7 +90,7 @@ class DashboardController extends Controller
                 'name' => $company->name,
                 'email' => $company->email,
                 'phone' => $company->phone,
-                'logo' => $company->logo ? asset('storage/' . $company->logo) : null,
+                'logo' => $company->logo ? cdn_storage($company->logo) : null,
             ],
             'stats' => $stats,
             'recent_employees' => $recent_employees,

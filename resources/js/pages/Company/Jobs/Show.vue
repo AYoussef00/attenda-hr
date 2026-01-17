@@ -22,6 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm, usePage } from '@inertiajs/vue3';
+import { useStorageUrl } from '@/composables/useStorageUrl';
 import InputError from '@/components/InputError.vue';
 import {
     Briefcase,
@@ -157,8 +158,12 @@ const submitUpload = () => {
     });
 };
 
+const { getStorageUrlForDownload } = useStorageUrl();
+
 const downloadResume = (resumePath: string) => {
-    window.open(`/storage/${resumePath}`, '_blank');
+    // Use helper to ensure proper domain (no IP addresses)
+    const url = getStorageUrlForDownload(resumePath);
+    window.open(url, '_blank');
 };
 
 const deleteCandidate = (candidateId: number, candidateName: string) => {

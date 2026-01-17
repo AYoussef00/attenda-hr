@@ -56,6 +56,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | CDN URL for Static Assets
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used as the base URL for serving static assets (images, CSS, JS)
+    | through a Content Delivery Network (CDN). If set, all asset URLs will use
+    | this CDN URL instead of APP_URL for better performance and global distribution.
+    | Examples: https://cdn.example.com, https://d1234567890.cloudfront.net
+    | Leave empty to use APP_URL (no CDN).
+    |
+    */
+
+    'cdn_url' => env('CDN_URL', null),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

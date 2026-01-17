@@ -24,4 +24,27 @@ export default defineConfig({
             },
         }),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'vue-vendor': ['vue', '@vueuse/core'],
+                    'inertia': ['@inertiajs/vue3'],
+                    'ui-components': ['lucide-vue-next'],
+                },
+            },
+        },
+        chunkSizeWarningLimit: 1000,
+        cssCodeSplit: true,
+        minify: 'terser',
+        terserOptions: {
+            compress: {
+                drop_console: true,
+                drop_debugger: true,
+            },
+        },
+    },
+    optimizeDeps: {
+        include: ['vue', '@vueuse/core', '@inertiajs/vue3'],
+    },
 });

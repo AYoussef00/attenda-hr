@@ -34,6 +34,7 @@ import {
     Plus,
 } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { useStorageUrl } from '@/composables/useStorageUrl';
 
 interface DocumentType {
     id: number;
@@ -151,6 +152,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
+const { getStorageUrlForDownload } = useStorageUrl();
+
 const getFileIcon = (fileType: string | null) => {
     if (!fileType) return File;
     if (fileType === 'image') return Image;
@@ -159,7 +162,9 @@ const getFileIcon = (fileType: string | null) => {
 };
 
 const downloadDocument = (document: Document) => {
-    window.open(`/storage/${document.file_path}`, '_blank');
+    // Use helper to ensure proper domain (no IP addresses)
+    const url = getStorageUrlForDownload(document.file_path);
+    window.open(url, '_blank');
 };
 
 const isExpired = (expiryDate: string | null) => {

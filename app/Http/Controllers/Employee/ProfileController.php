@@ -66,7 +66,7 @@ class ProfileController extends Controller
                 'email' => $company->email,
                 'phone' => $company->phone,
                 'address' => $company->address,
-                'logo' => $company->logo ? asset('storage/' . $company->logo) : null,
+                'logo' => $company->logo ? cdn_storage($company->logo) : null,
             ],
         ]);
     }

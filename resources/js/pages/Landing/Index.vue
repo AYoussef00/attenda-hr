@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { Head } from '@inertiajs/vue3';
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { defineAsyncComponent } from 'vue';
 import Header from './Header.vue';
 import Hero from './Hero.vue';
 
-// Lazy load components that are below the fold
+// Lazy load components that are below the fold with Intersection Observer
 const HRSimplified = defineAsyncComponent(() => import('./HRSimplified.vue'));
 const PayrollManagement = defineAsyncComponent(() => import('./PayrollManagement.vue'));
 const Features = defineAsyncComponent(() => import('./Features.vue'));
@@ -17,6 +17,66 @@ const ChatWidget = defineAsyncComponent(() => import('@/components/ChatWidget.vu
 const Footer = defineAsyncComponent(() => import('./Footer.vue'));
 const CompanyRegisterForm = defineAsyncComponent(() => import('@/components/CompanyRegisterForm.vue'));
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+
+// Lazy load visibility flags for Intersection Observer optimization
+const showHRSimplified = ref(false);
+const showPayrollManagement = ref(false);
+const showFeatures = ref(false);
+const showPricing = ref(false);
+const showTestimonials = ref(false);
+const showCTA = ref(false);
+const showAbout = ref(false);
+const showFooter = ref(false);
+const showChatWidget = ref(false);
+
+onMounted(() => {
+    // Delay chat widget loading slightly to prioritize main content
+    setTimeout(() => {
+        showChatWidget.value = true;
+    }, 2000);
+
+    // Use Intersection Observer for better performance
+    if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const target = entry.target as HTMLElement;
+                        const component = target.dataset.component;
+                        
+                        if (component === 'hrsimplified') showHRSimplified.value = true;
+                        else if (component === 'payroll') showPayrollManagement.value = true;
+                        else if (component === 'features') showFeatures.value = true;
+                        else if (component === 'pricing') showPricing.value = true;
+                        else if (component === 'testimonials') showTestimonials.value = true;
+                        else if (component === 'cta') showCTA.value = true;
+                        else if (component === 'about') showAbout.value = true;
+                        else if (component === 'footer') showFooter.value = true;
+                        
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                rootMargin: '100px', // Start loading 100px before component enters viewport
+            }
+        );
+
+        // Observe placeholder elements (will be created in template)
+        const placeholders = document.querySelectorAll('[data-component]');
+        placeholders.forEach((placeholder) => observer.observe(placeholder));
+    } else {
+        // Fallback: load all components if IntersectionObserver is not supported
+        showHRSimplified.value = true;
+        showPayrollManagement.value = true;
+        showFeatures.value = true;
+        showPricing.value = true;
+        showTestimonials.value = true;
+        showCTA.value = true;
+        showAbout.value = true;
+        showFooter.value = true;
+    }
+});
 
 const props = defineProps<{
     plans?: Array<{
@@ -191,6 +251,9 @@ const faqData = computed(() => ({
         <script type="application/ld+json" v-html="JSON.stringify(organizationData)" />
         <script type="application/ld+json" v-html="JSON.stringify(breadcrumbData)" />
         <script type="application/ld+json" v-html="JSON.stringify(faqData)" />
+        <!-- Preload critical resources -->
+        <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     </Head>
     <div class="min-h-screen bg-white antialiased">
         <Header :on-register-click="openRegister" />
@@ -201,18 +264,43 @@ const faqData = computed(() => ({
                 :settings-text1="props.settingsText1"
                 :settings-text2="props.settingsText2"
             />
-            <HRSimplified />
-            <PayrollManagement />
-            <Features />
-            <Pricing :plans="plans" :on-select-plan="openRegister" />
-            <Testimonials />
-            <CTA />
-            <About />
+            
+            <!-- Lazy loaded components with Intersection Observer -->
+            <div data-component="hrsimplified">
+                <HRSimplified v-if="showHRSimplified" />
+            </div>
+            
+            <div data-component="payroll">
+                <PayrollManagement v-if="showPayrollManagement" />
+            </div>
+            
+            <div data-component="features">
+                <Features v-if="showFeatures" />
+            </div>
+            
+            <div data-component="pricing">
+                <Pricing v-if="showPricing" :plans="plans" :on-select-plan="openRegister" />
+            </div>
+            
+            <div data-component="testimonials">
+                <Testimonials v-if="showTestimonials" />
+            </div>
+            
+            <div data-component="cta">
+                <CTA v-if="showCTA" />
+            </div>
+            
+            <div data-component="about">
+                <About v-if="showAbout" />
+            </div>
         </main>
-        <Footer />
+        
+        <div data-component="footer">
+            <Footer v-if="showFooter" />
+        </div>
 
-        <!-- Floating Chatbot -->
-        <ChatWidget />
+        <!-- Floating Chatbot - Load after main content -->
+        <ChatWidget v-if="showChatWidget" />
 
         <!-- Registration Modal -->
         <Dialog :open="showRegister" @update:open="showRegister = $event">

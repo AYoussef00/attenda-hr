@@ -76,7 +76,7 @@ class SubscriptionController extends Controller
             'company' => [
                 'id' => $company->id,
                 'name' => $company->name,
-                'logo' => $company->logo ? asset('storage/' . $company->logo) : null,
+                'logo' => $company->logo ? cdn_storage($company->logo) : null,
             ],
             'subscription' => $subscriptionDetails,
             'subscriptions_history' => $subscriptions,

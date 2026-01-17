@@ -23,6 +23,7 @@ import {
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/vue3';
 import { ref, computed } from 'vue';
+import { useStorageUrl } from '@/composables/useStorageUrl';
 import {
     User,
     Mail,
@@ -211,8 +212,12 @@ const getFileIcon = (fileType: string | null) => {
     return File;
 };
 
+const { getStorageUrlForDownload } = useStorageUrl();
+
 const downloadDocument = (document: Document) => {
-    window.open(`/storage/${document.file_path}`, '_blank');
+    // Use helper to ensure proper domain (no IP addresses)
+    const url = getStorageUrlForDownload(document.file_path);
+    window.open(url, '_blank');
 };
 
 const formatMonth = (month: string) => {

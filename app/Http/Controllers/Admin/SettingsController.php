@@ -26,9 +26,9 @@ class SettingsController extends Controller
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($logo) {
-                // Use asset() helper - works better on server
+                // Use cdn_storage() helper for proper URL generation with domain/CDN
                 $logoUrl = $logo->logo_path 
-                    ? asset('storage/' . $logo->logo_path)
+                    ? cdn_storage($logo->logo_path)
                     : null;
                 
                 return [

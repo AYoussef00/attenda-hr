@@ -187,7 +187,7 @@ class CompanyController extends Controller
                 'email' => $company->email,
                 'phone' => $company->phone,
                 'address' => $company->address,
-                'logo' => $company->logo ? asset('storage/' . $company->logo) : null,
+                'logo' => $company->logo ? cdn_storage($company->logo) : null,
                 'attendance_methods' => $company->attendance_methods ?? ['qr' => true, 'ip' => false],
                 'ip_whitelist' => $company->ip_whitelist ?? [],
                 'status' => $company->status,
